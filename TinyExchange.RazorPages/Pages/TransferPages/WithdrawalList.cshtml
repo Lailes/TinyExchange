@@ -1,0 +1,65 @@
+@page "/withdrawals"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using TinyExchange.RazorPages.Models.AmountModels
+@model TinyExchange.RazorPages.Pages.TransferPages.WithdrawalList
+
+<link rel="stylesheet" asp-href-include="css/list.css"/>
+<script asp-src-include="js/requests.js"></script>
+
+@functions 
+{
+    private static string StringStatus(WithdrawalState debitState) =>
+        debitState switch {
+            WithdrawalState.Confirmed => "Confirmed",
+            WithdrawalState.InQueue => "In Queue",
+            WithdrawalState.NotConfirmed => "Not Confirmed"
+        };
+}
+
+<div>
+    <div class="scroll-table">
+        <table>
+            <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Date Time</th>
+                <th>Card Number</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+        </table>
+        <div class="scroll-table-body">
+            <table class="table">
+                <tbody id="tableBody">
+                @foreach (var withdrawal in Model.Withdrawals)
+                {
+                    <tr id=@($"row{withdrawal.Id}")>1
+                        <td>@withdrawal.Amount</td>
+                        <td>@withdrawal.DateTime.ToString("f")</td>
+                        <td>@withdrawal.CardNumber</td>
+                        <td>@(StringStatus(withdrawal.WithdrawalState))</td>
+                        <td>
+                            @if (withdrawal.WithdrawalState == WithdrawalState.InQueue)
+                            {
+                                @if (SystemRoles.IsTransferManager(Model.ViewerUser.Role))
+                                {
+                                    <span class="justify-content-center text-center">
+                                        <button onclick="cancelTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/cancel')" class="btn btn-danger">Cancel Withdrawal</button>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="justify-content-center text-center">
+                                        <button onclick="cancelTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/cancel')" class="btn btn-danger">Cancel Withdrawal</button>
+                                    </span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
