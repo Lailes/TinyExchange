@@ -1,0 +1,15 @@
+.info-div {
+    margin: 10%;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: rgba(170, 163, 248, 0.25);
+    box-shadow: #393939;
+}
+
+h3, h6 {
+    text-align: center;
+}
+
+h6 {
+    height: auto;
+}
