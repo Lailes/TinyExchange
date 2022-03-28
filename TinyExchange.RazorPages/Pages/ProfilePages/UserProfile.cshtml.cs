@@ -1,0 +1,57 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+using TinyExchange.RazorPages.Database.Managers.Amount;
+using TinyExchange.RazorPages.Database.Managers.Auth;
+using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Extensions;
+using TinyExchange.RazorPages.Models.AmountModels;
+using TinyExchange.RazorPages.Models.AuthModels;
+
+namespace TinyExchange.RazorPages.Pages.ProfilePages;
+
+[Authorize(Roles = SystemRoles.User)]
+public class UserProfile : ProfilePage
+{
+    public string? ErrorMessage { get; set; }
+    
+    public UserProfile(IUserManager userManager, IBlockingManager blockingManager, IAuthManager authManager, IAmountManager amountManager) 
+        : base(userManager, blockingManager, authManager, amountManager) { }
+    
+    public async Task<AmountInfo> GetAmountInfo() => await AmountManager.GetAmountInfoForUser(User.GetUserIdFromClaims());
+
+    public async Task OnGetSelfProfileWithMessage(string? message = null)
+    {
+        ErrorMessage = message;
+        await OnGetSelfProfile();
+    }
+
+    // userId may be is not necessary
+    public async Task<IActionResult> OnPostMakeDebit(Debit debit, CardInfo cardInfo, int userId)
+    {
+        ViewerUser = UserForView = debit.User = await UserManager.FindUserByIdAsync(userId);
+        debit.Card = cardInfo;
+        ErrorMessage = await AmountManager.CreateDebitAsync(debit) switch
+        {
+            DebitResult.Fail => "Debit creation is failed",
+            DebitResult.Ok => null,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        
+        return RedirectToPage("../ProfilePages/UserProfile",  "SelfProfileWithMessage", new { message = ErrorMessage });
+    }
+
+    public async Task<IActionResult> OnPostMakeWithdrawal(Withdrawal withdrawal, int userId)
+    {
+        ViewerUser = UserForView = withdrawal.User = await UserManager.FindUserByIdAsync(userId);
+        ErrorMessage = await AmountManager.CreateWithdrawal(withdrawal) switch
+        {
+            WithdrawalResult.Ok => null,
+            WithdrawalResult.Banned => "User is Banned",
+            WithdrawalResult.FailNoAmount => "Insufficient Funds in the Account",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        return RedirectToPage("../ProfilePages/UserProfile", "SelfProfileWithMessage",new { message = ErrorMessage });
+    }
+}
