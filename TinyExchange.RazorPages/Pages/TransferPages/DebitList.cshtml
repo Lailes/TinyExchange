@@ -1,0 +1,64 @@
+@page "/transfers"
+@model TinyExchange.RazorPages.Pages.TransferPages.TransferLIst
+@using TinyExchange.RazorPages.Models.AmountModels
+
+<link rel="stylesheet" asp-href-include="css/list.css"/>
+<script asp-src-include="js/requests.js"></script>
+
+@functions 
+{
+    private static string StringStatus(DebitState debitState) =>
+        debitState switch {
+            DebitState.Confiremed => "Confirmed",
+            DebitState.InQueue => "In Queue",
+            DebitState.NotConfiremed => "Not Confirmed"
+        };
+}
+
+<div>
+    <div class="scroll-table">
+        <table>
+            <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Date Time</th>
+                <th>Card Details</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+        </table>
+        <div class="scroll-table-body">
+            <table class="table">
+            <tbody id="tableBody">
+                @foreach (var debit in Model.Debits)
+                {
+                    <tr id=@($"row{debit.Id}")>
+                        <td>@debit.Amount</td>
+                        <td>@debit.DateTime.ToString("f")</td>
+                        <td>@($"\"{debit.Card.CardNumber}\", CVV: {debit.Card.CVV}, {debit.Card.ExpireDate}")</td>
+                        <td>@StringStatus(debit.DebitState)</td>
+                        <td>
+                            @if (debit.DebitState == DebitState.InQueue)
+                            {
+                                @if (SystemRoles.IsTransferManager(Model.ViewerUser.Role))
+                                {
+                                    <span class="justify-content-center text-center">
+                                        <button onclick="cancelTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/cancel')" class="btn btn-danger">Cancel Debit</button>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="justify-content-center text-center">
+                                        <button onclick="cancelTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/cancel')" class="btn btn-danger">Cancel Debit</button>
+                                    </span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
