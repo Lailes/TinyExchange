@@ -1,0 +1,21 @@
+@page "/log-in"
+@model TinyExchange.RazorPages.Pages.AuthPages.Login
+
+<link rel="stylesheet" asp-href-include="/css/auth-form.css"/>
+
+@if (Model.Message != null)
+{
+    <div class="justify-content-center alert-danger">
+        <h5 class="h5 text-center">@Model.Message</h5>
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data">
+    <div class="container">
+        <label><b>Email</b></label>
+        <input type="text" placeholder="Enter Email" name="email" required>
+        <label><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" required>
+        <button type="submit">Login</button>
+    </div>
+</form>
