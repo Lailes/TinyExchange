@@ -1,0 +1,11 @@
+input {
+    margin: 10px;
+}
+
+button {
+    margin: 5px;
+}
+
+.small-padding {
+    padding: 10px;
+}
