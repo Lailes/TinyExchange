@@ -11,7 +11,8 @@
         debitState switch {
             DebitState.Confiremed => "Confirmed",
             DebitState.InQueue => "In Queue",
-            DebitState.NotConfiremed => "Not Confirmed"
+            DebitState.NotConfiremed => "Not Confirmed",
+            _ => "UNKNOWN STATE"
         };
 }
 
@@ -36,7 +37,7 @@
                     <tr id=@($"row{debit.Id}")>
                         <td>@debit.Amount</td>
                         <td>@debit.DateTime.ToString("f")</td>
-                        <td>@($"\"{debit.Card.CardNumber}\", CVV: {debit.Card.CVV}, {debit.Card.ExpireDate}")</td>
+                        <td>@($"\"{debit.Card.CardNumber}\", CVV: {debit.Card.Cvv}, {debit.Card.ExpireDate}")</td>
                         <td>@StringStatus(debit.DebitState)</td>
                         <td>
                             @if (debit.DebitState == DebitState.InQueue)

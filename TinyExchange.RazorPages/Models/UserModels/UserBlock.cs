@@ -1,3 +1,5 @@
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
 namespace TinyExchange.RazorPages.Models.UserModels;
 
 public class UserBlock

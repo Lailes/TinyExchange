@@ -46,7 +46,7 @@ public class AuthManager : IAuthManager
     public async Task<SignUpResult> SignUpAsync(SignUpData signUpData, HttpContext httpContext)
     {
         if (await _userManager.FindUserByEmailOrDefaultAsync(signUpData.Email) != null)
-            return new EmailRegisteredResult();
+            return new EmailAlreadyRegisteredResult();
 
         var user = new User
         {

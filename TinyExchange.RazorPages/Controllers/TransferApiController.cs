@@ -15,7 +15,8 @@ public class TransferApiController : Controller
         {
             DebitCancelResult.Ok => StatusCodes.Status200OK,
             DebitCancelResult.NotFound => StatusCodes.Status400BadRequest,
-            DebitCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed
+            DebitCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
+            _ => throw new ArgumentOutOfRangeException()
         };
 
     [HttpPost("withdrawals/cancel")]
@@ -24,7 +25,8 @@ public class TransferApiController : Controller
             {
                 WithdrawalCancelResult.Ok => StatusCodes.Status200OK,
                 WithdrawalCancelResult.NotFound => StatusCodes.Status400BadRequest,
-                WithdrawalCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed
+                WithdrawalCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
+                _ => throw new ArgumentOutOfRangeException()
             };
 }
 

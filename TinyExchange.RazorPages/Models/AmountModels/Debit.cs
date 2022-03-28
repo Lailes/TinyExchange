@@ -1,4 +1,6 @@
 using TinyExchange.RazorPages.Models.UserModels;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
 
 namespace TinyExchange.RazorPages.Models.AmountModels;
 

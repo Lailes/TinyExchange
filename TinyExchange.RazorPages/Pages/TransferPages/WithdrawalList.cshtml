@@ -12,7 +12,8 @@
         debitState switch {
             WithdrawalState.Confirmed => "Confirmed",
             WithdrawalState.InQueue => "In Queue",
-            WithdrawalState.NotConfirmed => "Not Confirmed"
+            WithdrawalState.NotConfirmed => "Not Confirmed",
+            _ => "UNKNOWN STATE" 
         };
 }
 

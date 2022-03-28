@@ -1,4 +1,6 @@
 using TinyExchange.RazorPages.Models.UserModels;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
 
 namespace TinyExchange.RazorPages.Models.AmountModels;
 
@@ -7,8 +9,8 @@ public class Withdrawal
     public int Id { get; set; }
     public User User { get; set; }
     public decimal Amount { get; set; }
-    
-    public string CardNumber { get; set; }
+
+    public string CardNumber { get; set; } = string.Empty;
     
     public DateTime DateTime { get; set; }
 

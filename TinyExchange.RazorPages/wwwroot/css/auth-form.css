@@ -4,7 +4,7 @@ form {
     margin: 10% 30%;
     padding: 10px;
     background-color: rgba(170, 163, 248, 0.25);
-    border-radius: 15px;
+    border-radius: 8px;
     box-shadow: #393939;
 }
 
@@ -21,13 +21,13 @@ input[type=text], input[type=password] {
 
 /* Set a style for all buttons */
 button {
-    background-color: #6e3a91;
+    background-color: #383e79;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 5px;
     width: 100%;
 }
 
@@ -47,12 +47,6 @@ button:hover {
 .imgcontainer {
     text-align: center;
     margin: 24px 0 12px 0;
-}
-
-/* Avatar image */
-img.avatar {
-    width: 40%;
-    border-radius: 50%;
 }
 
 /* Add padding to containers */

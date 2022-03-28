@@ -1,6 +1,7 @@
 @page "/sign-up"
 @model TinyExchange.RazorPages.Pages.AuthPages.SignUp
 
+<link rel="stylesheet" asp-href-include="/css/auth-form.css"/>
 
 @if (Model.Message != null)
 {
@@ -10,8 +11,7 @@
     
 }
 
-<link rel="stylesheet" asp-href-include="/css/auth-form.css"/>
-<form method="post" enctype="multipart/form-data">
+<form method="post" >
     <div class="container">
         <input type="text" placeholder="Enter FirstName" name="firstName" required>
         <input type="text" placeholder="Enter LastName" name="lastName" required>

@@ -17,7 +17,7 @@ public class SignUp : PageModel
     public async Task<ActionResult> OnPost([FromServices] IAuthManager authManager, string firstName, string lastName, string email, string password) =>
         await authManager.SignUpAsync(new (firstName, lastName, email, password), HttpContext) switch {
             OkSignUpResult ok => RedirectToPage($"../ProfilePages/{ok.User.Role}Profile", "SelfProfile"),
-            EmailRegisteredResult => RedirectToPage("../AuthPages/SignUp", new {message = "Email already registered"}),
+            EmailAlreadyRegisteredResult => RedirectToPage("../AuthPages/SignUp", new {message = "Email already registered"}),
             _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
         };
 }

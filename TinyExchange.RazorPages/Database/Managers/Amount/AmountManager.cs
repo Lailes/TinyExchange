@@ -28,7 +28,7 @@ public class AmountManager : IAmountManager
     {
         if (await _blockingManager.GetUserBlockAsync(debit.User.Id) != null)
             return DebitResult.Fail;
-
+        
         debit.DateTime = DateTime.UtcNow;
         _context.Debits.Add(debit);
         await _context.SaveChangesAsync();
@@ -55,22 +55,21 @@ public class AmountManager : IAmountManager
         var debits = await ListDebitsForUser(userId);
         var withdrawls = await ListWithdrawalsForUser(userId);
 
-        return new AmountInfo
-        {
-            DebitsCount = new Dictionary<DebitState, int>
+        return new AmountInfo(
+            amount: debits.Where(d => d.DebitState == DebitState.Confiremed).Sum(d => d.Amount) - withdrawls.Where(w => w.WithdrawalState == WithdrawalState.Confirmed).Sum(w => w.Amount),
+            debitsCount: new Dictionary<DebitState, int>
             {
-                { DebitState.Confiremed, debits.Count(d => d.DebitState == DebitState.Confiremed) },
-                { DebitState.NotConfiremed, debits.Count(d => d.DebitState == DebitState.NotConfiremed) },
-                { DebitState.InQueue, debits.Count(d => d.DebitState == DebitState.InQueue) }
+                {DebitState.Confiremed, debits.Count(d => d.DebitState == DebitState.Confiremed)},
+                {DebitState.NotConfiremed, debits.Count(d => d.DebitState == DebitState.NotConfiremed)},
+                {DebitState.InQueue, debits.Count(d => d.DebitState == DebitState.InQueue)}
             },
-            WithdrawalsCount = new Dictionary<WithdrawalState, int>
+            withdrawalsCount: new Dictionary<WithdrawalState, int>
             {
-                {WithdrawalState.Confirmed, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.Confirmed) },
-                {WithdrawalState.NotConfirmed, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.NotConfirmed) },
-                {WithdrawalState.InQueue, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.InQueue) }
-            },
-            Amount = debits.Where(d => d.DebitState == DebitState.Confiremed).Sum(d => d.Amount) - withdrawls.Where(w => w.WithdrawalState == WithdrawalState.Confirmed).Sum(w => w.Amount)
-        };
+                {WithdrawalState.Confirmed, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.Confirmed)},
+                {WithdrawalState.NotConfirmed, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.NotConfirmed)},
+                {WithdrawalState.InQueue, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.InQueue)}
+            }
+        );
     }
 
     public async Task<DebitCancelResult> CancelDebitTransferAsync(int transferId, int cancelerId)

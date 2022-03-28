@@ -24,4 +24,4 @@ public enum SignUpResultType : byte { Ok, EmailRegistered }
 
 public abstract record SignUpResult(SignUpResultType Type);
 public record OkSignUpResult(User User) : SignUpResult(SignUpResultType.Ok);
-public record EmailRegisteredResult() : SignUpResult(SignUpResultType.EmailRegistered);
+public record EmailAlreadyRegisteredResult() : SignUpResult(SignUpResultType.EmailRegistered);
