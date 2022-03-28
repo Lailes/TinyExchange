@@ -1,0 +1,34 @@
+@model TinyExchange.RazorPages.Pages.ProfilePages.AdminProfile
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered small-padding">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit User Details</h5>
+            </div>
+            <form method="post" asp-page="../ProfilePages/AdminProfile" asp-page-handler="EditForeignUser">
+                <input type="hidden" name="id" value="@Model.UserForView.Id"/>
+                <input class="form-control form-text" type="text" name="firstName" value="@Model.UserForView.FirstName"/>
+                <input class="form-control form-text" type="text" name="lastName" value="@Model.UserForView.LastName"/>
+                <input class="form-control form-text" type="text" name="email" value="@Model.UserForView.Email"/>
+                <div class="form-control">
+                    @foreach (var profileRole in Model.AvailableProfileRoles)
+                    {
+                        <input type="radio" id="@profileRole" value="@profileRole" name="role" @(Model.ViewerUser.Role == profileRole ? "checked" : string.Empty)/>
+                        <label for="@profileRole">@profileRole</label>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Apply Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div>
+        <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#editModal">Edit Info</button>
+    </div>
+</div>
