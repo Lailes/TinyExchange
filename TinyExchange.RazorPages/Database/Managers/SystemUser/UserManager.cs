@@ -14,12 +14,12 @@ public class UserManager : IUserManager
 
     public async Task<User?> FindUserByEmailOrDefaultAsync(string email, bool anonimize = true) =>
         anonimize
-            ? (await _context.Users.FirstOrDefaultAsync(user => user.Email == email))?.Anonimize()
+            ? (await _context.Users.FirstOrDefaultAsync(user => user.Email == email))?.RemoveSensitiveData()
             : await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
 
     public async Task<User?> FindUserByIdOrDefaultAsync(int id, bool anonimize = true) =>
         anonimize
-            ? (await _context.Users.FirstOrDefaultAsync(user => user.Id == id))?.Anonimize()
+            ? (await _context.Users.FirstOrDefaultAsync(user => user.Id == id))?.RemoveSensitiveData()
             : await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
 
     public async Task<User> FindUserByEmailAsync(string email, bool anonimize = true) =>
@@ -72,7 +72,7 @@ public class UserManager : IUserManager
             .Skip(skipCount)
             .Take(count)
             .ToListAsync())
-        .Select(user => user.Anonimize());
+        .Select(user => user.RemoveSensitiveData());
 
     public Task<int> UserCountAsync() => _context.Users.CountAsync();
     

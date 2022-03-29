@@ -24,7 +24,7 @@ public class BlockingManager: IBlockingManager
             banRecord.BlockState = BlockState.AutoUnblock;
         else
         {
-            var releaser = await _userManager.FindUserByIdOrDefaultAsync((int) adminId);
+            var releaser = await _userManager.FindUserByIdOrDefaultAsync((int) adminId, false);
             banRecord.ReleaserAdmin = releaser;
             banRecord.BlockState = BlockState.ManualUnblock;
         }
@@ -42,11 +42,11 @@ public class BlockingManager: IBlockingManager
             return BlockUserResult.AlreadyBlocked;
         }
 
-        var user = await _userManager.FindUserByIdOrDefaultAsync(userId);
+        var user = await _userManager.FindUserByIdOrDefaultAsync(userId, false);
         if (user == null)
             return BlockUserResult.UserNotFound;
 
-        var admin = await _userManager.FindUserByIdOrDefaultAsync(adminId);
+        var admin = await _userManager.FindUserByIdOrDefaultAsync(adminId, false);
         if (admin == null)
             return BlockUserResult.AdminNotFound;
 
