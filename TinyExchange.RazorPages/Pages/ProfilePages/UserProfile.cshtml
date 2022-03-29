@@ -101,9 +101,9 @@
             <tr><td>Registed At:</td><td>@Model.UserForView.RegisteredAt.ToString("f")</td></tr>
             <tr><td>Email:</td><td>@Model.UserForView.Email</td></tr>
             <tr><td>Amount:</td><td>@amountInfo.Amount</td></tr>
-            <tr><td rowspan="3">Debits Count:</td><td>Confirmed: @amountInfo.DebitsCount[DebitState.Confiremed]</td></tr>
+            <tr><td rowspan="3">Debits Count:</td><td>Confirmed: @amountInfo.DebitsCount[DebitState.Confirmed]</td></tr>
             <tr><td>In Queue: @amountInfo.DebitsCount[DebitState.InQueue]</td></tr>
-            <tr><td>Not Confirmed: @amountInfo.DebitsCount[DebitState.NotConfiremed]</td></tr>
+            <tr><td>Not Confirmed: @amountInfo.DebitsCount[DebitState.NotConfirmed]</td></tr>
             <tr><td rowspan="3">Withdrawals Count:</td><td>Confirmed: @amountInfo.WithdrawalsCount[WithdrawalState.Confirmed]</td></tr>
             <tr><td>In Queue:@amountInfo.WithdrawalsCount[WithdrawalState.InQueue]</td></tr>
             <tr><td>Not Confirmed: @amountInfo.WithdrawalsCount[WithdrawalState.NotConfirmed]</td></tr>

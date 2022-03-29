@@ -15,12 +15,5 @@ public class Debit
     public DebitState DebitState { get; set; } = DebitState.InQueue;
 }
 
-[Flags]
-public enum DebitState : byte
-{
-    Confiremed = 0b00000001, 
-    NotConfiremed = 0b00000010, 
-    InQueue = 0b00000100
-}
-
-public enum DebitType : byte { ByUser, ByFoundsManager, }
+public enum DebitState : byte { Confirmed, NotConfirmed, InQueue }
+public enum DebitType : byte { ByUser, ByFoundsManager }

@@ -6,7 +6,7 @@ using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.TransferPages;
 
-public class TransferLIst : PageModel
+public class TransferList : PageModel
 {
     private readonly IUserManager _userManager;
     private readonly IAmountManager _amountManager;
@@ -15,7 +15,7 @@ public class TransferLIst : PageModel
     public User ViewerUser { get; set; } = Models.UserModels.User.StubUser;
     public IList<Debit> Debits { get; private set; } = Enumerable.Empty<Debit>().ToList();
     
-    public TransferLIst(IUserManager userManager, IAmountManager amountManager)
+    public TransferList(IUserManager userManager, IAmountManager amountManager)
     {
         _userManager = userManager;
         _amountManager = amountManager;
@@ -25,6 +25,12 @@ public class TransferLIst : PageModel
     {
         TransfersOwner = await _userManager.FindUserByIdAsync(transfersOwnerId);
         ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
-        Debits = await _amountManager.ListDebitsForUser(transfersOwnerId, stateFilter: DebitState.InQueue);
+        Debits = await _amountManager.ListDebitsForUser(transfersOwnerId, new [] { DebitState.InQueue });
+    }
+
+    public async Task OnGetFullList(int viewerId)
+    {
+        ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
+        Debits = await _amountManager.ListDebits(debitStates: new [] {DebitState.InQueue});
     }
 }

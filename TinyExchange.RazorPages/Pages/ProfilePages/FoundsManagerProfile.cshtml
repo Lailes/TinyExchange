@@ -20,7 +20,25 @@
     @if (Model.SelfView)
     {
         <div>
-            <a asp-page="../UserPages/UserList" class="btn btn-secondary">User List</a>
+            <div>
+                <a class="btn btn-secondary"
+                   asp-page="../TransferPages/DebitList"
+                   asp-page-handler="FullList"
+                   asp-route-viewerId="@Model.ViewerUser.Id">
+                    View Enqueued Debit Requests
+                </a>
+            </div>
+            <div>
+                <a class="btn btn-secondary"
+                   asp-page="../TransferPages/WithdrawalList"
+                   asp-page-handler="FullList"
+                   asp-route-viewerId="@Model.ViewerUser.Id">
+                    View Enqueued Withdrawal Requests
+                </a>
+            </div>
+            <div>
+                <a asp-page="../UserPages/UserList" class="btn btn-secondary">User List</a>
+            </div>
         </div>
     }
     else

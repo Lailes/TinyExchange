@@ -10,7 +10,7 @@ public class User
     public string Role { get; set; } = "User";
     public string? PasswordHash { get; set; }
     
-    public User Anonimize()
+    public User RemoveSensitiveData()
     {
         PasswordHash = null;
         return this;

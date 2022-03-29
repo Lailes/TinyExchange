@@ -12,6 +12,7 @@ public sealed class ApplicationContext : DbContext
     public DbSet<UserBlock> Blocks { get; set; }
     public DbSet<Debit> Debits { get; set; }
     public DbSet<Withdrawal> Withdrawals { get; set; } 
+    public DbSet<CardInfo> CardInfos { get; set; }
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) => Database.EnsureCreated();
 }

@@ -15,7 +15,7 @@ public class FoundsManagerProfile : ProfilePage
     
     public async Task<IActionResult> OnPostAddFounds(int userId, int foundsManagerId, decimal amount)
     {
-        await AmountManager.AddAmount(amount, foundsManagerId, userId);
+        await AmountManager.AddAmount(amount, userId);
         return await OnGetForeignProfile(userId);
     }
 }

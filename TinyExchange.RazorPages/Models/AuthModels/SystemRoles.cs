@@ -18,6 +18,7 @@ public static class SystemRoles
         Admin => new []{ Admin, User, KycManager, FoundsManager },
         User => Array.Empty<string>(),
         KycManager => new []{ User },
-        FoundsManager => new []{ User }
+        FoundsManager => new []{ User },
+        _ => throw new ArgumentOutOfRangeException(nameof(role), role, "Role is not implemented")
     };
 }

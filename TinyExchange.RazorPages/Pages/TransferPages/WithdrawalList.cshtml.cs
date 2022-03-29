@@ -26,6 +26,12 @@ public class WithdrawalList : PageModel
     {
         TransfersOwner = await _userManager.FindUserByIdAsync(transfersOwnerId);
         ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
-        Withdrawals = await _amountManager.ListWithdrawalsForUser(transfersOwnerId, stateFilter: WithdrawalState.InQueue);
+        Withdrawals = await _amountManager.ListWithdrawalsForUser(transfersOwnerId, new [] { WithdrawalState.InQueue });
+    }
+
+    public async Task OnGetFullList(int viewerId)
+    {
+        ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
+        Withdrawals = await _amountManager.ListWithdrawals(withdrawalStates: new[] { WithdrawalState.InQueue });
     }
 }
