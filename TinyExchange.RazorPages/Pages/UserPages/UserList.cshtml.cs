@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using TinyExchange.RazorPages.Models.UserModels;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Extensions;
+using TinyExchange.RazorPages.Models.AuthModels;
 
 namespace TinyExchange.RazorPages.Pages.UserPages;
 
@@ -18,10 +19,10 @@ public class UserList : PageModel
     
     public int CurrentPageNumber { get; private set; }
     
-    public async Task OnGet([FromServices] IUserManager userManager, [FromQuery] int page = 0)
+    public async Task OnGet([FromServices] IUserManager userManager, int page = 0)
     {
         Viewer = await userManager.FindUserByIdAsync(User.GetUserIdFromClaims());
-        Users = await userManager.ListUsersAsync(ItemsPerPage, ItemsPerPage * page);
+        Users = await userManager.ListUsersAsync(ItemsPerPage, ItemsPerPage * page, SystemRoles.AvailableViewRolesForRole(Viewer.Role));
         TotalUsersCount = await userManager.UserCountAsync();
         CurrentPageNumber = page;
     }
