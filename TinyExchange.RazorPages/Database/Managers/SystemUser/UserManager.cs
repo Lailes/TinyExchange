@@ -64,8 +64,15 @@ public class UserManager : IUserManager
         return AssignRoleResult.Ok;
     }
 
-    public async Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount) =>
-        (await _context.Users.OrderBy(user => user.Id).Skip(skipCount).Take(count).ToListAsync()).Select(user => user.Anonimize());
+    public async Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount, string[] systemRoles) =>
+        (await _context
+            .Users
+            .OrderBy(user => user.Id)
+            .Where(u => systemRoles.Contains(u.Role))
+            .Skip(skipCount)
+            .Take(count)
+            .ToListAsync())
+        .Select(user => user.Anonimize());
 
     public Task<int> UserCountAsync() => _context.Users.CountAsync();
     

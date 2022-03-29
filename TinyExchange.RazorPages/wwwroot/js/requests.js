@@ -20,8 +20,8 @@ function cancelTransfer(transferID, cancelerID, url) {
         })
     }).then(response => {
         if (response.status === 200){
-            alert('Cancel is successful')
             deleteRowWithId('row' + transferID, 'tableBody')
+            alert('Cancel is successful')
         } else if (response.status === 400) alert('Transfer not found') 
         else if (response.status === 405) alert('Status change is not allowed')
     })

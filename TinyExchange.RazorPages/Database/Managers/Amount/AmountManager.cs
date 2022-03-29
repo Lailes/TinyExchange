@@ -19,7 +19,10 @@ public class AmountManager : IAmountManager
     }
 
     public Task<Debit?> FindDebitByIdOrDefaultAsync(int transferId) => 
-        _context.Debits.FirstOrDefaultAsync(d => d.Id == transferId);
+        _context
+            .Debits
+            .Include(d => d.User)
+            .FirstOrDefaultAsync(d => d.Id == transferId);
 
     public Task<Withdrawal?> FindWithdrawalByIdOrDefaultAsync(int transferId) => 
         _context.Withdrawals.FirstOrDefaultAsync(d => d.Id == transferId);
@@ -30,6 +33,7 @@ public class AmountManager : IAmountManager
             return DebitResult.Fail;
         
         debit.DateTime = DateTime.UtcNow;
+        debit.User = await _userManager.FindUserByIdAsync(debit.User.Id); // To replace anonimized User
         _context.Debits.Add(debit);
         await _context.SaveChangesAsync();
         return DebitResult.Ok;
@@ -119,4 +123,22 @@ public class AmountManager : IAmountManager
             .Where(w => w.User.Id == userId && (w.WithdrawalState & stateFilter) != 0)
             .OrderBy(w=> w.Id)
             .ToListAsync();
+
+    public async Task<AddDebitResult> AddAmount(decimal amount, int foundsManagerId, int userId)
+    {
+        if (await _blockingManager.GetUserBlockAsync(userId) != null) 
+            return AddDebitResult.UserIsBanned;
+
+        _context.Debits.Add(new Debit
+        {
+            Amount = amount, 
+            User = await _userManager.FindUserByIdAsync(userId, anonimize: false),
+            DateTime = DateTime.UtcNow,
+            DebitState = DebitState.Confiremed,
+            DebitType = DebitType.ByFoundsManager,
+            Card = new CardInfo {CardNumber = "0000 0000 0000 0000", Cvv = 000, ExpireDate = "00/00", Holder = "SYSTEM" }
+        });
+        await _context.SaveChangesAsync();
+        return AddDebitResult.Ok;
+    }
 }
