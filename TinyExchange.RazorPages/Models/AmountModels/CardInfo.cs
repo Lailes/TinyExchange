@@ -1,10 +1,12 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
+using System.ComponentModel.DataAnnotations;
+
 namespace TinyExchange.RazorPages.Models.AmountModels;
 
 public class CardInfo
 {
-    public int Id { get; set; }
+    [Key]
     public string CardNumber { get; set; } = string.Empty;
     public string ExpireDate { get; set; } = string.Empty;
     public int Cvv { get; set; }

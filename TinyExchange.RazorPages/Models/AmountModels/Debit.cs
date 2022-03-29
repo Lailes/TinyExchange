@@ -11,7 +11,7 @@ public class Debit
     public decimal Amount { get; set; }
     public CardInfo Card { get; set; }
     public DateTime DateTime { get; set; }
-
+    public DebitType DebitType { get; set; } = DebitType.ByUser;
     public DebitState DebitState { get; set; } = DebitState.InQueue;
 }
 
@@ -21,4 +21,6 @@ public enum DebitState : byte
     Confiremed = 0b00000001, 
     NotConfiremed = 0b00000010, 
     InQueue = 0b00000100
-} 
+}
+
+public enum DebitType : byte { ByUser, ByFoundsManager, }

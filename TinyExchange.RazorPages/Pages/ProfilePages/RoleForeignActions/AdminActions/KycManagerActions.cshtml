@@ -1,0 +1,84 @@
+@model TinyExchange.RazorPages.Pages.ProfilePages.AdminProfile
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<link rel="stylesheet" asp-href-include="css/modal.css"/>
+
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered small-padding">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">User Block Details</h5>
+            </div>
+            <form method="post" asp-page="../ProfilePages/AdminProfile" asp-page-handler="BlockUser">
+                <div class="modal-body">
+                    <input class="form-control form-text" type="text" name="reason"/>
+                    <input class="form-control" type="datetime-local" name="releaseTime"/>
+                    <input type="hidden" name="userId" value="@Model.UserForView.Id"/>
+                    <input type="hidden" name="adminId" value="@Model.ViewerUser.Id"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Block</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered small-padding">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit User Details</h5>
+            </div>
+            <form method="post" asp-page="../ProfilePages/AdminProfile" asp-page-handler="EditForeignUser">
+                <input type="hidden" name="id" value="@Model.UserForView.Id"/>
+                <input class="form-control form-text" type="text" name="firstName" value="@Model.UserForView.FirstName"/>
+                <input class="form-control form-text" type="text" name="lastName" value="@Model.UserForView.LastName"/>
+                <input class="form-control form-text" type="text" name="email" value="@Model.UserForView.Email"/>
+                <input type="hidden" name="adminId" value="@Model.ViewerUser.Id"/>
+                <div class="form-control">
+                    @foreach (var profileRole in Model.AvailableProfileRoles)
+                    {
+                        <input type="radio" id="@profileRole" value="@profileRole" name="role" @(Model.UserForView.Role == profileRole ? "checked" : string.Empty)/>
+                        <label for="@profileRole">@profileRole</label>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Apply Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    @if (Model.UserBlock != null)
+    {
+        <div class="text-center">
+            <h4 class="h4">User is Banned</h4>
+            <h6 class="h6">Reason: @Model.UserBlock.Reason</h6>
+            <h5 class="h5">Banned Until: @Model.UserBlock.ReleaseTime.ToString("f")</h5>
+        </div>
+    }
+    <div>
+        <div>
+            <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#editModal">Edit Info</button>
+        </div>
+        <div>
+            @if (Model.UserBlock != null)
+            {
+                <form method="post" asp-page-handler="UnblockUser" asp-page="../ProfilePages/AdminProfile">
+                    <input type="hidden" name="userId" value="@Model.UserForView.Id"/>
+                    <input type="hidden" name="adminId" value="@Model.ViewerUser.Id"/>
+                    <button type="submit" class="btn btn-secondary">Unblock User</button>
+                </form>
+            }
+            else
+            {
+                <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-secondary">Block user</button>
+            }
+        </div>
+    </div>
+</div>

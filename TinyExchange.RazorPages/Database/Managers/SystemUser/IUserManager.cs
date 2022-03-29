@@ -12,7 +12,7 @@ public interface IUserManager
     Task AddUserAsync(User user);
     Task<AssignRoleResult> AssignRole(int userId, string role);
     Task<ModifyUserResult> ModifyUserAsync(User user);
-    Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount);
+    Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount, string[] systemRoles);
     Task<int> UserCountAsync();
 }
 
