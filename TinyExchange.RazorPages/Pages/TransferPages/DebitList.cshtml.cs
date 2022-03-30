@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Models.AmountModels;
+using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.TransferPages;
@@ -28,9 +29,18 @@ public class TransferList : PageModel
         Debits = await _amountManager.ListDebitsForUser(transfersOwnerId, new [] { DebitState.InQueue });
     }
 
-    public async Task OnGetFullList(int viewerId)
+    public async Task OnGetFullQueueList(int viewerId)
     {
         ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
         Debits = await _amountManager.ListDebits(debitStates: new [] {DebitState.InQueue});
+    }
+
+    public async Task OnGetTotalDebitList(int viewerId)
+    {
+        ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
+        if (SystemRoles.IsAdmin(ViewerUser.Role))
+            Debits = await _amountManager.ListDebits();
+        else
+            Response.StatusCode = StatusCodes.Status403Forbidden;
     }
 }

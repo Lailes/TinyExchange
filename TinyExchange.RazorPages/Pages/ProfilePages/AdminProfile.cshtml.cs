@@ -13,7 +13,6 @@ public class AdminProfile : ProfilePage
     public AdminProfile(IUserManager userManager, IBlockingManager blockingManager, IAuthManager authManager, IAmountManager amountManager) : 
         base(userManager, blockingManager, authManager, amountManager) { }
     
-    
     public async Task OnPostBlockUser(string reason, DateTime releaseTime, int userId, int adminId)
     {
         await BlockingManager.BlockUserAsync(userId, adminId, releaseTime, reason);
