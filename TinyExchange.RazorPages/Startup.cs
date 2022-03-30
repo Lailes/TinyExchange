@@ -24,6 +24,7 @@ public class Startup
         services.AddScoped<IAuthManager, AuthManager>();
         services.AddScoped<IBlockingManager, BlockingManager>();
         services.AddScoped<IAmountManager, AmountManager>();
+        services.AddScoped<IKycManager, KycManager>();
 
         services.AddAuthorization(options => options.AddPolicy(KycClaimSettings.PolicyName, 
             builder => builder.RequireClaim(KycClaimSettings.ClaimType, KycClaimSettings.ConfirmedKycClaimValue)));

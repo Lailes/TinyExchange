@@ -29,25 +29,30 @@ public class AuthManager : IAuthManager
 
         if (await _blockingManager.GetUserBlockAsync(user.Id) != null)
             return new BannedResult();
-        
+
         var claims = new List<Claim> {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()), 
             new(ClaimTypes.Role, user.Role),
             new(ClaimTypes.Name, user.FirstName),
             new(ClaimTypes.Surname, user.LastName),
             new(ClaimTypes.Email, user.Email),
-            new(KycClaimSettings.ClaimType, user.KycStatus.ToString())
         };
-        
+
+        if (user.KycRequest != null) 
+            claims.Add(new Claim(KycClaimSettings.ClaimType, user.KycRequest.KycState.ToString()));
+
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
         await httpContext.SignInAsync(claimsPrincipal);
 
-        return user.KycStatus switch
+        if (user.KycRequest == null)
+            return new KycNotCreatedResult();
+        
+        return user.KycRequest.KycState switch
         {
-            KycStatus.Confiremed => new OkLoginResult(user),
-            KycStatus.Rejected => new KycIsNotConfirmedResult(user),
-            KycStatus.InQueue => new KycIsInQueueResult(user),
+            KycState.Confirmed => new OkLoginResult(user),
+            KycState.Rejected => new KycIsRejectedResult(),
+            KycState.InQueue => new KycIsInQueueResult(),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

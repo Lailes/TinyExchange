@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.UserModels;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
 

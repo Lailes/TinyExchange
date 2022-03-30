@@ -8,7 +8,6 @@ public interface IUserManager
     Task<User?> FindUserByIdOrDefaultAsync(int userId, bool anonimize = true);
     Task<User> FindUserByEmailAsync(string email, bool anonimize = true);
     Task<User> FindUserByIdAsync(int userId, bool anonimize = true);
-
     Task AddUserAsync(User user);
     Task<AssignRoleResult> AssignRole(int userId, string role);
     Task<ModifyUserResult> ModifyUserAsync(User user);
