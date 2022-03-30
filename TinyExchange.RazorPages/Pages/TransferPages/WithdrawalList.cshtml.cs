@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Models.AmountModels;
+using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.TransferPages;
 
 public class WithdrawalList : PageModel
 {
-    
     private readonly IUserManager _userManager;
     private readonly IAmountManager _amountManager;
 
@@ -29,9 +29,19 @@ public class WithdrawalList : PageModel
         Withdrawals = await _amountManager.ListWithdrawalsForUser(transfersOwnerId, new [] { WithdrawalState.InQueue });
     }
 
-    public async Task OnGetFullList(int viewerId)
+    public async Task OnGetFullQueueList(int viewerId)
     {
         ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
         Withdrawals = await _amountManager.ListWithdrawals(withdrawalStates: new[] { WithdrawalState.InQueue });
     }
+
+    public async Task OnGetTotalWithdrawalList(int viewerId)
+    {
+        ViewerUser = await _userManager.FindUserByIdAsync(viewerId);
+        if (SystemRoles.IsAdmin(ViewerUser.Role))
+            Withdrawals = await _amountManager.ListWithdrawals();
+        else
+            Response.StatusCode = StatusCodes.Status403Forbidden;
+    }
+    
 }

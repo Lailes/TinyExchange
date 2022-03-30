@@ -22,6 +22,7 @@
             <thead>
             <tr>
                 <th>Amount</th>
+                <th>Email</th>
                 <th>Date Time</th>
                 <th>Card Details</th>
                 <th>Status</th>
@@ -36,6 +37,7 @@
                 {
                     <tr id=@($"row{debit.Id}")>
                         <td>@debit.Amount</td>
+                        <td>@debit.User.Email</td>
                         <td>@debit.DateTime.ToString("f")</td>
                         <td>@($"\"{debit.Card.CardNumber}\", CVV: {debit.Card.Cvv}, {debit.Card.ExpireDate}")</td>
                         <td>@StringStatus(debit.DebitState)</td>

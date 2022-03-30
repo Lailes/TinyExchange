@@ -23,7 +23,7 @@
             <div>
                 <a class="btn btn-secondary"
                    asp-page="../TransferPages/DebitList"
-                   asp-page-handler="FullList"
+                   asp-page-handler="FullQueueList"
                    asp-route-viewerId="@Model.ViewerUser.Id">
                     View Enqueued Debit Requests
                 </a>
@@ -31,7 +31,7 @@
             <div>
                 <a class="btn btn-secondary"
                    asp-page="../TransferPages/WithdrawalList"
-                   asp-page-handler="FullList"
+                   asp-page-handler="FullQueueList"
                    asp-route-viewerId="@Model.ViewerUser.Id">
                     View Enqueued Withdrawal Requests
                 </a>

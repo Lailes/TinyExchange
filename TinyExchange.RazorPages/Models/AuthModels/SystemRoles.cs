@@ -10,6 +10,7 @@ public static class SystemRoles
     public static bool IsAdmin(string role) => role == Admin;
 
     public static bool IsTransferManager(string role) => role == FoundsManager;
+    public static bool IsUser(string role) => role == User;
 
     public static IList<string> AllRoles => new List<string> {Admin, User, KycManager, FoundsManager};
 
