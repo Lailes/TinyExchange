@@ -21,6 +21,12 @@
             <div>
                 <a asp-page="../UserPages/UserList" class="btn btn-secondary">List Users</a>
             </div>
+            <div>
+                <a asp-page="../TransferPages/DebitList" asp-page-handler="TotalDebitList" asp-route-viewerId="@Model.ViewerUser.Id" class="btn btn-secondary">List All Debits</a>
+            </div>
+            <div>
+                <a asp-page="../TransferPages/WithdrawalList" asp-page-handler="TotalWithdrawalList" asp-route-viewerId="@Model.ViewerUser.Id" class="btn btn-secondary">List All Withdrawals</a>
+            </div>
         </div>
     }
     else

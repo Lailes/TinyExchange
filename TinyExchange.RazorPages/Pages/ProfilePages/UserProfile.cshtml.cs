@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.AuthModels;
+using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
 
@@ -29,7 +31,7 @@ public class UserProfile : ProfilePage
     // userId may be is not necessary
     public async Task<IActionResult> OnPostMakeDebit(Debit debit, CardInfo cardInfo, int userId)
     {
-        ViewerUser = UserForView = debit.User = await UserManager.FindUserByIdAsync(userId);
+        debit.User = new User {Id = userId};
         debit.Card = cardInfo;
         ErrorMessage = await AmountManager.CreateDebitAsync(debit) switch
         {
@@ -37,7 +39,7 @@ public class UserProfile : ProfilePage
             DebitResult.Ok => null,
             _ => throw new ArgumentOutOfRangeException()
         };
-        
+        ViewerUser = UserForView = await UserManager.FindUserByIdAsync(userId);
         return RedirectToPage("../ProfilePages/UserProfile",  "SelfProfileWithMessage", new { message = ErrorMessage });
     }
 

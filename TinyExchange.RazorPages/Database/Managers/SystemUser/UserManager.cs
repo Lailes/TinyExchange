@@ -14,12 +14,12 @@ public class UserManager : IUserManager
 
     public async Task<User?> FindUserByEmailOrDefaultAsync(string email, bool anonimize = true) =>
         anonimize
-            ? (await _context.Users.FirstOrDefaultAsync(user => user.Email == email))?.Anonimize()
+            ? (await _context.Users.FirstOrDefaultAsync(user => user.Email == email))?.RemoveSensitiveData()
             : await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
 
     public async Task<User?> FindUserByIdOrDefaultAsync(int id, bool anonimize = true) =>
         anonimize
-            ? (await _context.Users.FirstOrDefaultAsync(user => user.Id == id))?.Anonimize()
+            ? (await _context.Users.FirstOrDefaultAsync(user => user.Id == id))?.RemoveSensitiveData()
             : await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
 
     public async Task<User> FindUserByEmailAsync(string email, bool anonimize = true) =>
@@ -64,8 +64,15 @@ public class UserManager : IUserManager
         return AssignRoleResult.Ok;
     }
 
-    public async Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount) =>
-        (await _context.Users.OrderBy(user => user.Id).Skip(skipCount).Take(count).ToListAsync()).Select(user => user.Anonimize());
+    public async Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount, string[] systemRoles) =>
+        (await _context
+            .Users
+            .OrderBy(user => user.Id)
+            .Where(u => systemRoles.Contains(u.Role))
+            .Skip(skipCount)
+            .Take(count)
+            .ToListAsync())
+        .Select(user => user.RemoveSensitiveData());
 
     public Task<int> UserCountAsync() => _context.Users.CountAsync();
     

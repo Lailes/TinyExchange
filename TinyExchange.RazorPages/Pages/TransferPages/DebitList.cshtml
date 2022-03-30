@@ -1,5 +1,5 @@
 @page "/transfers"
-@model TinyExchange.RazorPages.Pages.TransferPages.TransferLIst
+@model TinyExchange.RazorPages.Pages.TransferPages.TransferList
 @using TinyExchange.RazorPages.Models.AmountModels
 
 <link rel="stylesheet" asp-href-include="css/list.css"/>
@@ -9,9 +9,9 @@
 {
     private static string StringStatus(DebitState debitState) =>
         debitState switch {
-            DebitState.Confiremed => "Confirmed",
+            DebitState.Confirmed => "Confirmed",
             DebitState.InQueue => "In Queue",
-            DebitState.NotConfiremed => "Not Confirmed",
+            DebitState.NotConfirmed => "Not Confirmed",
             _ => "UNKNOWN STATE"
         };
 }
@@ -22,6 +22,7 @@
             <thead>
             <tr>
                 <th>Amount</th>
+                <th>Email</th>
                 <th>Date Time</th>
                 <th>Card Details</th>
                 <th>Status</th>
@@ -36,6 +37,7 @@
                 {
                     <tr id=@($"row{debit.Id}")>
                         <td>@debit.Amount</td>
+                        <td>@debit.User.Email</td>
                         <td>@debit.DateTime.ToString("f")</td>
                         <td>@($"\"{debit.Card.CardNumber}\", CVV: {debit.Card.Cvv}, {debit.Card.ExpireDate}")</td>
                         <td>@StringStatus(debit.DebitState)</td>
@@ -46,6 +48,7 @@
                                 {
                                     <span class="justify-content-center text-center">
                                         <button onclick="cancelTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/cancel')" class="btn btn-danger">Cancel Debit</button>
+                                        <button onclick="cancelTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/confirm')" class="btn btn-success">Confirm Debit</button>
                                     </span>
                                 }
                                 else

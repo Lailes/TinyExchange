@@ -7,8 +7,8 @@ function deleteRowWithId(rowId, tableId) {
         }
 }
 
-function cancelTransfer(transferID, cancelerID, url) {
-    fetch(url, {
+async function cancelTransfer(transferID, cancelerID, url) {
+    const response = await fetch(url, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -18,11 +18,12 @@ function cancelTransfer(transferID, cancelerID, url) {
             transferId: transferID,
             cancelerId: cancelerID
         })
-    }).then(response => {
-        if (response.status === 200){
-            alert('Cancel is successful')
-            deleteRowWithId('row' + transferID, 'tableBody')
-        } else if (response.status === 400) alert('Transfer not found') 
-        else if (response.status === 405) alert('Status change is not allowed')
-    })
+    });
+    
+    if (response.status === 200){
+        deleteRowWithId('row' + transferID, 'tableBody')
+        alert('Operation is successful')
+    } 
+    else if (response.status === 400) alert('Transfer not found') 
+    else if (response.status === 405) alert('Status change is not allowed')
 }
