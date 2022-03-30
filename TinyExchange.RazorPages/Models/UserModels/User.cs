@@ -10,6 +10,7 @@ public class User
     public string Role { get; set; } = "User";
     public string? PasswordHash { get; set; }
     
+    public KycStatus KycStatus { get; set; }
     public User RemoveSensitiveData()
     {
         PasswordHash = null;
@@ -18,11 +19,10 @@ public class User
 
 
     public static User StubUser => new() {
-        FirstName = string.Empty,
-        Email = string.Empty,
-        LastName = string.Empty,
         RegisteredAt = DateTime.MinValue,
         Role = "Stub",
         PasswordHash = string.Empty
     };
 }
+
+public enum KycStatus { InQueue, Confiremed, Rejected }

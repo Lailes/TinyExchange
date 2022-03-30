@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.TransferPages;
 
+[Authorize(Policy = KycClaimSettings.PolicyName)]
 public class TransferList : PageModel
 {
     private readonly IUserManager _userManager;

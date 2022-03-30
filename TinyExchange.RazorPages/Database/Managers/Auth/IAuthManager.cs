@@ -13,11 +13,13 @@ public interface IAuthManager
 }
 
 
-public enum LoginResultType : byte { Ok, WrongLogin, Banned }
+public enum LoginResultType : byte { Ok, WrongLogin, Banned, KycNotConfirmed}
 public abstract record LoginResult(LoginResultType Type);
 public record OkLoginResult(User User) : LoginResult(LoginResultType.Ok);
 public record WrongLoginResult() : LoginResult(LoginResultType.WrongLogin);
 public record BannedResult() : LoginResult(LoginResultType.Banned);
+public record KycIsNotConfirmedResult(User User) : LoginResult(LoginResultType.KycNotConfirmed);
+public record KycIsInQueueResult(User User) : LoginResult(LoginResultType.KycNotConfirmed);
 
 public enum SignUpResultType : byte { Ok, EmailRegistered }
 

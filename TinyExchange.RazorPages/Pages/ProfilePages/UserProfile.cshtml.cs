@@ -1,10 +1,10 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.AuthModels;
@@ -12,7 +12,7 @@ using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
 
-[Authorize(Roles = SystemRoles.User)]
+[Authorize(Roles = SystemRoles.User, Policy = KycClaimSettings.PolicyName)]
 public class UserProfile : ProfilePage
 {
     public string? ErrorMessage { get; set; }

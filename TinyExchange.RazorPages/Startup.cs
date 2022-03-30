@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using ApplicationContext = TinyExchange.RazorPages.Database.ApplicationContext;
 namespace TinyExchange.RazorPages;
 
@@ -24,6 +25,8 @@ public class Startup
         services.AddScoped<IBlockingManager, BlockingManager>();
         services.AddScoped<IAmountManager, AmountManager>();
 
+        services.AddAuthorization(options => options.AddPolicy(KycClaimSettings.PolicyName, 
+            builder => builder.RequireClaim(KycClaimSettings.ClaimType, KycClaimSettings.ConfirmedKycClaimValue)));
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options => options.LoginPath = "/log-in");
     }

@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
@@ -34,13 +35,21 @@ public class AuthManager : IAuthManager
             new(ClaimTypes.Role, user.Role),
             new(ClaimTypes.Name, user.FirstName),
             new(ClaimTypes.Surname, user.LastName),
-            new(ClaimTypes.Email, user.Email)
+            new(ClaimTypes.Email, user.Email),
+            new(KycClaimSettings.ClaimType, user.KycStatus.ToString())
         };
         
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
         await httpContext.SignInAsync(claimsPrincipal);
-        return new OkLoginResult(user);
+
+        return user.KycStatus switch
+        {
+            KycStatus.Confiremed => new OkLoginResult(user),
+            KycStatus.Rejected => new KycIsNotConfirmedResult(user),
+            KycStatus.InQueue => new KycIsInQueueResult(user),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public async Task<SignUpResult> SignUpAsync(SignUpData signUpData, HttpContext httpContext)
