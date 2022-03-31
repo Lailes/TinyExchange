@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
@@ -28,19 +29,32 @@ public class AuthManager : IAuthManager
 
         if (await _blockingManager.GetUserBlockAsync(user.Id) != null)
             return new BannedResult();
-        
+
         var claims = new List<Claim> {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()), 
             new(ClaimTypes.Role, user.Role),
             new(ClaimTypes.Name, user.FirstName),
             new(ClaimTypes.Surname, user.LastName),
-            new(ClaimTypes.Email, user.Email)
+            new(ClaimTypes.Email, user.Email),
         };
-        
+
+        if (user.KycRequest != null) 
+            claims.Add(new Claim(KycClaimSettings.ClaimType, user.KycRequest.KycState.ToString()));
+
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
         await httpContext.SignInAsync(claimsPrincipal);
-        return new OkLoginResult(user);
+
+        if (user.KycRequest == null)
+            return new KycNotCreatedResult();
+        
+        return user.KycRequest.KycState switch
+        {
+            KycState.Confirmed => new OkLoginResult(user),
+            KycState.Rejected => new KycIsRejectedResult(),
+            KycState.InQueue => new KycIsInQueueResult(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public async Task<SignUpResult> SignUpAsync(SignUpData signUpData, HttpContext httpContext)

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TinyExchange.RazorPages.Database.Managers.Amount;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -10,7 +11,7 @@ namespace TinyExchange.RazorPages.Controllers;
 public class TransferApiController : Controller
 {
     [HttpPost("debits/cancel")]
-    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}")]
+    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}", Policy = KycClaimSettings.PolicyName)]
     public async Task CancelTransfer([FromServices] IAmountManager amountManager, [FromBody] TransferStateChangeInfo stateChangeInfo) =>
         Response.StatusCode = await amountManager.CancelDebitAsync(stateChangeInfo.TransferId, stateChangeInfo.CancelerId) switch
         {
@@ -21,7 +22,7 @@ public class TransferApiController : Controller
         };
 
     [HttpPost("withdrawals/cancel")]
-    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}")]
+    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}", Policy = KycClaimSettings.PolicyName)]
     public async Task CancelWithdrawal([FromServices] IAmountManager amountManager, [FromBody] TransferStateChangeInfo stateChangeInfo) =>
         Response.StatusCode = await amountManager.CancelWithdrawalAsync(stateChangeInfo.TransferId, stateChangeInfo.CancelerId) switch
             {
@@ -32,7 +33,7 @@ public class TransferApiController : Controller
             };
 
     [HttpPost("debits/confirm")]
-    [Authorize(Roles = SystemRoles.FoundsManager)]
+    [Authorize(Roles = SystemRoles.FoundsManager, Policy = KycClaimSettings.PolicyName)]
     public async Task ConfirmDebit([FromServices] IAmountManager amountManager,
         [FromBody] TransferStateChangeInfo stateChangeInfo) =>
         Response.StatusCode =
@@ -45,7 +46,7 @@ public class TransferApiController : Controller
 
 
     [HttpPost("withdrawals/confirm")]
-    [Authorize(Roles = SystemRoles.FoundsManager)]
+    [Authorize(Roles = SystemRoles.FoundsManager, Policy = KycClaimSettings.PolicyName)]
     public async Task ConfirmWithdrawal([FromServices] IAmountManager amountManager,
         [FromBody] TransferStateChangeInfo stateChangeInfo) =>
         Response.StatusCode =

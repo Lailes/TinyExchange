@@ -19,9 +19,12 @@ public class Login : PageModel
     public async Task<ActionResult> OnPost([FromServices] IAuthManager authManager, string email, string password) =>
         await authManager.LoginAsync(new LoginData(email, password), HttpContext) switch
         {
-            OkLoginResult ok => RedirectToPage($@"../ProfilePages/{ok.User.Role}Profile", "SelfProfile"),
-            WrongLoginResult => RedirectToPage("../AuthPages/Login", new { message = "Wrong Login Or Password" }),
-            BannedResult => RedirectToPage("../AuthPages/Login", new { message = "Banned" }),
+            OkLoginResult ok    => RedirectToPage($@"../ProfilePages/{ok.User.Role}Profile", "SelfProfile"),
+            WrongLoginResult    => RedirectToPage("Login", new { message = "Wrong Login Or Password" }),
+            BannedResult        => RedirectToPage("Login", new { message = "Banned" }),
+            KycIsRejectedResult => RedirectToPage("KycRequest", "Message",new { message = "KYC is Rejected for this user" }),
+            KycNotCreatedResult => RedirectToPage("KycRequest"),
+            KycIsInQueueResult  => RedirectToPage("Login", new { message = "KYC is in queue, please wait"}), 
             _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
         };
 }

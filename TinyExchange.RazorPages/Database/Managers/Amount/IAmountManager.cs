@@ -1,4 +1,3 @@
-using System.Collections;
 using TinyExchange.RazorPages.Models.AmountModels;
 
 namespace TinyExchange.RazorPages.Database.Managers.Amount;

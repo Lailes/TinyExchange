@@ -1,0 +1,63 @@
+@page "/verification-list"
+@using TinyExchange.RazorPages.Infrastructure.Authentication
+@model TinyExchange.RazorPages.Pages.AuthPages.KycVerificationList
+
+
+<link rel="stylesheet" asp-href-include="css/list.css"/>
+<script asp-src-include="js/requests.js"></script>
+
+@functions 
+{
+    private static string StringStatus(KycState kyc) =>
+        kyc switch {
+            KycState.Confirmed => "Confirmed",
+            KycState.InQueue => "In Queue",
+            KycState.Rejected => "Rejected",
+            _ => "UNKNOWN STATE"
+        };
+}
+
+<div>
+    <div class="scroll-table">
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Last Name</th>
+                <th>Adress</th>
+                <th>Pasport</th>
+                <th>Status</th>
+                @if (SystemRoles.IsKycMamager(Model.ViewerUser!.Role))
+                {
+                    <th>Actions</th>
+                }
+            </tr>
+            </thead>
+        </table>
+        <div class="scroll-table-body">
+            <table class="table">
+            <tbody id="tableBody">
+                @foreach (var user in Model.UserWithKycRequests)
+                {
+                    <tr id=@($"row{user.KycRequest!.Id}")>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.KycRequest.Adress</td>
+                        <td>@user.KycRequest.PasportNumber</td>
+                        <td>@StringStatus(user.KycRequest.KycState)</td>
+                        @if (SystemRoles.IsKycMamager(Model.ViewerUser!.Role))
+                        {
+                            <td>
+                                <span class="justify-content-center text-center">
+                                    <button onclick="fetchKyc(@user.KycRequest.Id, 'api/kyc/cancel')" class="btn btn-danger">Reject Kyc</button>
+                                    <button onclick="fetchKyc(@user.KycRequest.Id, 'api/kyc/confirm')" class="btn btn-success">Confirm Kyc</button>
+                                </span>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>

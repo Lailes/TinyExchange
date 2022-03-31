@@ -14,13 +14,13 @@ public class UserManager : IUserManager
 
     public async Task<User?> FindUserByEmailOrDefaultAsync(string email, bool anonimize = true) =>
         anonimize
-            ? (await _context.Users.FirstOrDefaultAsync(user => user.Email == email))?.RemoveSensitiveData()
-            : await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
+            ? (await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Email == email))?.RemoveSensitiveData()
+            : await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Email == email);
 
     public async Task<User?> FindUserByIdOrDefaultAsync(int id, bool anonimize = true) =>
         anonimize
-            ? (await _context.Users.FirstOrDefaultAsync(user => user.Id == id))?.RemoveSensitiveData()
-            : await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
+            ? (await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Id == id))?.RemoveSensitiveData()
+            : await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Id == id);
 
     public async Task<User> FindUserByEmailAsync(string email, bool anonimize = true) =>
         await FindUserByEmailOrDefaultAsync(email, anonimize) ??
@@ -46,6 +46,7 @@ public class UserManager : IUserManager
         databaseEntity.FirstName = user.FirstName;
         databaseEntity.LastName = user.LastName;
         databaseEntity.Role = user.Role;
+        databaseEntity.KycRequest ??= user.KycRequest;
         await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;
     }

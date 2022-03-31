@@ -20,6 +20,7 @@
       <_ContentIncludedByDefault Remove="Pages\Views\Auth\SignUp.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Views\User\Profile.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\ProfilePages\RoleSelfActions\UserActions.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Shared\Message.cshtml" />
     </ItemGroup>
 
 </Project>

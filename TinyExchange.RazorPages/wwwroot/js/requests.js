@@ -3,7 +3,7 @@ function deleteRowWithId(rowId, tableId) {
     for(let i = 0; i < table.rows.length; i++)
         if (table.rows[i].id === rowId){
             table.deleteRow(i)
-            break;
+            break
         }
 }
 
@@ -18,7 +18,7 @@ async function cancelTransfer(transferID, cancelerID, url) {
             transferId: transferID,
             cancelerId: cancelerID
         })
-    });
+    })
     
     if (response.status === 200){
         deleteRowWithId('row' + transferID, 'tableBody')
@@ -26,4 +26,22 @@ async function cancelTransfer(transferID, cancelerID, url) {
     } 
     else if (response.status === 400) alert('Transfer not found') 
     else if (response.status === 405) alert('Status change is not allowed')
+}
+
+async function fetchKyc(kycId, url) {
+    const response = await fetch(url + '/' + kycId, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            requestId: kycId,
+        })
+    })
+    if (response.status === 200){
+        deleteRowWithId('row' + kycId, 'tableBody')
+        alert('Operation is successful')
+    }
+    else if (response.status === 400) alert('KYC request not found')
 }

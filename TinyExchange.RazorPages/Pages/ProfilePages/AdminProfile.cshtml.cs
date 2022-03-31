@@ -2,12 +2,13 @@ using Microsoft.AspNetCore.Authorization;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
 
-[Authorize(Roles = SystemRoles.Admin)] 
+[Authorize(Roles = SystemRoles.Admin, Policy = KycClaimSettings.PolicyName)] 
 public class AdminProfile : ProfilePage
 {
     public AdminProfile(IUserManager userManager, IBlockingManager blockingManager, IAuthManager authManager, IAmountManager amountManager) : 

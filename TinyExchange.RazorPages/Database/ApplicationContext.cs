@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.UserModels;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
 
@@ -13,6 +15,7 @@ public sealed class ApplicationContext : DbContext
     public DbSet<Debit> Debits { get; set; }
     public DbSet<Withdrawal> Withdrawals { get; set; } 
     public DbSet<CardInfo> CardInfos { get; set; }
+    public DbSet<KycUserRequest> KycUserRequests { get; set; }
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) => Database.EnsureCreated();
 }
