@@ -1,3 +1,5 @@
+using TinyExchange.RazorPages.Models.AuthModels;
+
 namespace TinyExchange.RazorPages.Infrastructure.Authentication;
 
 public static class KycClaimSettings

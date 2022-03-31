@@ -1,17 +1,22 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 #pragma warning disable CS8618
 namespace TinyExchange.RazorPages.Models.UserModels;
 
+[Table("user_block")]
 public class UserBlock
 {
-    public int Id { get; set; }
-    public string Reason { get; set; }
-    public User User { get; set; }
-    public User IssuerAdmin { get; set; }
-    public User? ReleaserAdmin { get; set; }
-    public BlockState BlockState { get; set; }
-    public DateTime BanTime { get; set; }
-    public DateTime ReleaseTime { get; set; }
+    [Column("id")] [Key] public int Id { get; set; }
+    [Column("reason")] public string Reason { get; set; }
+    [ForeignKey("user_id")] public User User { get; set; }
+    [ForeignKey("issuer_admin_id")] public User IssuerAdmin { get; set; }
+    [ForeignKey("releaser_admin_id")] public User? ReleaserAdmin { get; set; }
+    [Column("block_state")] public BlockState BlockState { get; set; }
+    [Column("ban_time")] public DateTime BanTime { get; set; }
+    [Column("release_time")] public DateTime ReleaseTime { get; set; }
 }
 
 public enum BlockState : byte { Blocked, ManualUnblock, AutoUnblock }

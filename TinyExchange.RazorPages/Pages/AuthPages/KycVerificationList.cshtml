@@ -42,8 +42,8 @@
                     <tr id=@($"row{user.KycRequest!.Id}")>
                         <td>@user.FirstName</td>
                         <td>@user.LastName</td>
-                        <td>@user.KycRequest.Adress</td>
-                        <td>@user.KycRequest.PasportNumber</td>
+                        <td>@user.KycRequest.Address</td>
+                        <td>@user.KycRequest.PassportNumber</td>
                         <td>@StringStatus(user.KycRequest.KycState)</td>
                         @if (SystemRoles.IsKycMamager(Model.ViewerUser!.Role))
                         {

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AmountModels;
+using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global

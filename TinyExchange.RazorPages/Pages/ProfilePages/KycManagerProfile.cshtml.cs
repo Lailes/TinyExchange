@@ -3,6 +3,7 @@ using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
+using TinyExchange.RazorPages.Models.AuthModels;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
 
