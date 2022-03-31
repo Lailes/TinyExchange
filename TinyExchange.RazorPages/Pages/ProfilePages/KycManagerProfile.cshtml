@@ -1,5 +1,5 @@
-@page "/admin-profile-panel"
-@model TinyExchange.RazorPages.Pages.ProfilePages.AdminProfile
+@page
+@model TinyExchange.RazorPages.Pages.ProfilePages.KycManagerProfile
 
 <link rel="stylesheet" asp-href-include="/css/profile.css"/>
 
@@ -18,15 +18,13 @@
     @if (Model.SelfView)
     {
         <div>
+            <div><a asp-page="../AuthPages/KycVerificationList" class="btn btn-secondary">View KYC Requests</a></div>
             <div><a asp-page="../UserPages/UserList" class="btn btn-secondary">List Users</a></div>
-            <div><a asp-page="../TransferPages/DebitList" asp-page-handler="TotalDebitList" asp-route-viewerId="@Model.ViewerUser.Id" class="btn btn-secondary">List All Debits</a></div>
-            <div><a asp-page="../TransferPages/WithdrawalList" asp-page-handler="TotalWithdrawalList" asp-route-viewerId="@Model.ViewerUser.Id" class="btn btn-secondary">List All Withdrawals</a></div>
-            <div><a asp-page="../AuthPages/KycVerificationList" class="btn btn-secondary" >KYC Verification requests list</a></div>
         </div>
     }
     else
     {
-        @await Html.PartialAsync($"RoleForeignActions/AdminActions/{Model.UserForView.Role}Actions", Model)
+        @await Html.PartialAsync($"RoleForeignActions/KycManagerActions/{Model.UserForView.Role}Actions", Model)
         
         <div>
             <a asp-page="../UserPages/UserList" class="btn btn-secondary">Go Back to User List</a>

@@ -46,7 +46,7 @@ public class UserManager : IUserManager
         databaseEntity.FirstName = user.FirstName;
         databaseEntity.LastName = user.LastName;
         databaseEntity.Role = user.Role;
-        databaseEntity.KycRequest = user.KycRequest;
+        databaseEntity.KycRequest ??= user.KycRequest;
         await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;
     }

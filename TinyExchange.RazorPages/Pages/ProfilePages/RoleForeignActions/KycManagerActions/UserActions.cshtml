@@ -1,0 +1,28 @@
+@using TinyExchange.RazorPages.Infrastructure.Authentication
+@model TinyExchange.RazorPages.Pages.ProfilePages.KycManagerProfile
+
+@{ var kycRequest = Model.UserForView.KycRequest; }
+
+<div>
+    @if (kycRequest != null)
+    {
+        <span>
+            @if (kycRequest.KycState is KycState.Confirmed or KycState.InQueue)
+            {
+                <form method="post" asp-page-handler="ChangeKycState">
+                    <input type="hidden" name="requestId" value="@kycRequest.Id"/>
+                    <input type="hidden" name="kycState" value="@KycState.Rejected"/>
+                    <button type="submit" class="btn btn-danger">Reject</button>
+                </form>
+            }
+            @if (kycRequest.KycState is KycState.Rejected or KycState.InQueue)
+            {
+                <form method="post" asp-page-handler="ChangeKycState">
+                    <input type="hidden" name="requestId" value="@kycRequest.Id"/>
+                    <input type="hidden" name="kycState" value="@KycState.Confirmed"/>
+                    <button type="submit" class="btn btn-success">Confirm</button>
+                </form>
+            }
+        </span>
+    }
+</div>

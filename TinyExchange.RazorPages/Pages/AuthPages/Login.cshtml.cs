@@ -22,7 +22,7 @@ public class Login : PageModel
             OkLoginResult ok    => RedirectToPage($@"../ProfilePages/{ok.User.Role}Profile", "SelfProfile"),
             WrongLoginResult    => RedirectToPage("Login", new { message = "Wrong Login Or Password" }),
             BannedResult        => RedirectToPage("Login", new { message = "Banned" }),
-            KycIsRejectedResult => RedirectToPage("KystrincRequest", "Message",new { message = "KYC is Rejected for this user" }),
+            KycIsRejectedResult => RedirectToPage("KycRequest", "Message",new { message = "KYC is Rejected for this user" }),
             KycNotCreatedResult => RedirectToPage("KycRequest"),
             KycIsInQueueResult  => RedirectToPage("Login", new { message = "KYC is in queue, please wait"}), 
             _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)

@@ -1,8 +1,12 @@
 using TinyExchange.RazorPages.Infrastructure.Authentication;
+using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Database.Managers.Auth;
 
 public interface IKycManager
 {
-    public Task AddKycRequestInQueueAsync(KycUserRequest kycRequest, int userId);
+    Task AddKycRequestInQueueAsync(KycUserRequest kycRequest, int userId);
+    Task<IList<User>> ListUsersWithRequests(KycState[]? kycStates = null);
+    Task<ChangeKycStateResult> ChangeStateKyc(int kycId, KycState kycState);
 }
+public enum ChangeKycStateResult : byte { Ok, NotFound }
