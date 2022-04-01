@@ -28,6 +28,6 @@ public class KycVerificationList : PageModel
     public async Task OnGet()
     {
         UserWithKycRequests = await _kycManager.QueryUsersWithRequests(kycStates: new [] { KycState.InQueue }).ToListAsync();
-        ViewerUser = await _userManager.FindUserByIdAsync(User.GetUserIdFromClaims());
+        ViewerUser = await _userManager.FindUserByIdAsync(User.GetUserId());
     }
 }

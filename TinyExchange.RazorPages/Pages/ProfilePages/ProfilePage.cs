@@ -34,10 +34,10 @@ public class ProfilePage : PageModel
     public Task OnGet() => OnGetSelfProfile();
 
     public async Task OnGetSelfProfile() =>
-        ViewerUser = UserForView = await UserManager.FindUserByIdAsync(User.GetUserIdFromClaims());
+        ViewerUser = UserForView = await UserManager.FindUserByIdAsync(User.GetUserId());
     public async Task<IActionResult> OnGetForeignProfile(int profileId)
     {
-        ViewerUser = await UserManager.FindUserByIdAsync(User.GetUserIdFromClaims());
+        ViewerUser = await UserManager.FindUserByIdAsync(User.GetUserId());
         
         var profile = await UserManager.FindUserByIdOrDefaultAsync(profileId);
         if (profile == null) return NotFound();

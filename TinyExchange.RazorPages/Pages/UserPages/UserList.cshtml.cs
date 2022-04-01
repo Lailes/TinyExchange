@@ -22,7 +22,7 @@ public class UserList : PageModel
     
     public async Task OnGet([FromServices] IUserManager userManager, int page = 0)
     {
-        Viewer = await userManager.FindUserByIdAsync(User.GetUserIdFromClaims());
+        Viewer = await userManager.FindUserByIdAsync(User.GetUserId());
         Users = await userManager
             .QueryUsersAsync(ItemsPerPage, ItemsPerPage * page, SystemRoles.AvailableViewRolesForRole(Viewer.Role))
             .ToListAsync();

@@ -24,7 +24,7 @@ public class BlockingManager: IBlockingManager
             banRecord.BlockState = BlockState.AutoUnblock;
         else
         {
-            var releaser = await _userManager.FindUserByIdOrDefaultAsync((int) adminId, false);
+            var releaser = await _userManager.FindUserByIdOrDefaultAsync(adminId.Value, false);
             banRecord.ReleaserAdmin = releaser;
             banRecord.BlockState = BlockState.ManualUnblock;
         }

@@ -25,6 +25,6 @@ public class Login : PageModel
             KycIsRejectedResult => RedirectToPage("KycRequest", "Message",new { message = "KYC is Rejected for this user" }),
             KycNotCreatedResult => RedirectToPage("KycRequest"),
             KycIsInQueueResult  => RedirectToPage("Login", new { message = "KYC is in queue, please wait"}), 
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+            _ => new ContentResult { Content = "Unhandled Login Respnonse", StatusCode = StatusCodes.Status500InternalServerError }
         };
 }

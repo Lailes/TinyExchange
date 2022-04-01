@@ -20,7 +20,7 @@ public class UserProfile : ProfilePage
     public UserProfile(IUserManager userManager, IBlockingManager blockingManager, IAuthManager authManager, IAmountManager amountManager) 
         : base(userManager, blockingManager, authManager, amountManager) { }
     
-    public async Task<AmountInfo> GetAmountInfo() => await AmountManager.GetAmountInfoForUser(User.GetUserIdFromClaims());
+    public async Task<AmountInfo> GetAmountInfo() => await AmountManager.GetAmountInfoForUser(User.GetUserId());
 
     public async Task OnGetSelfProfileWithMessage(string? message = null)
     {

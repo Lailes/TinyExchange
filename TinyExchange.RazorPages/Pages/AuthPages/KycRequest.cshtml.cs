@@ -27,7 +27,7 @@ public class KycRequest : PageModel
     }
 
     public async Task OnGet() => 
-        RequesterUser = await _userManager.FindUserByIdAsync(User.GetUserIdFromClaims());
+        RequesterUser = await _userManager.FindUserByIdAsync(User.GetUserId());
 
     public async Task OnGetMessage(string message)
     {
@@ -37,7 +37,7 @@ public class KycRequest : PageModel
     
     public async Task<IActionResult> OnPost([FromForm] KycUserRequest request)
     {
-        await _kycManager.AddKycRequestInQueueAsync(request, User.GetUserIdFromClaims());
+        await _kycManager.AddKycRequestInQueueAsync(request, User.GetUserId());
         return RedirectToPage("Login", new { message = "KYC Request is created" });
     }
 
