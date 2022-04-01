@@ -34,7 +34,7 @@ public class AmountManager : IAmountManager
     public async Task<DebitResult> CreateDebitAsync(Debit debit)
     {
         if (await _blockingManager.GetUserBlockAsync(debit.User.Id) != null)
-            return DebitResult.Fail;
+            return DebitResult.Banned;
 
         debit.DateTime = DateTime.UtcNow;
         debit.Card = await UpdateCard(debit.Card);

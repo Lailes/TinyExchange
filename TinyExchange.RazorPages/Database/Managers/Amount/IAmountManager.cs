@@ -18,7 +18,7 @@ public interface IAmountManager
     IQueryable<Withdrawal> QueryWithdrawals(WithdrawalState[]? stateFilter = null); 
 }
 
-public enum DebitResult : byte { Ok, Fail }
+public enum DebitResult : byte { Ok, Banned }
 public enum WithdrawalResult : byte { Ok, FailNoAmount, Banned }
 public enum DebitCancelResult : byte { Ok, NotFound, NotAllowed }
 public enum WithdrawalCancelResult : byte { Ok, NotFound, NotAllowed }

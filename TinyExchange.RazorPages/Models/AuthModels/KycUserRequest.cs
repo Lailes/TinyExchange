@@ -7,12 +7,28 @@ namespace TinyExchange.RazorPages.Models.AuthModels;
 [Table("kyc_user_request")]
 public sealed class KycUserRequest
 {
-    [Column("id")] [Key] public int Id { get; set; }
-    [Column("name")] public string Name { get; set; }
-    [Column("last_name")] public string LastName { get; set; }
-    [Column("passport_number")] public string PassportNumber { get; set; }
-    [Column("address")] public string Address { get; set; }
-    [Column("kyc_state")] public KycState KycState { get; set; } = KycState.InQueue;
+    [Column("id")] 
+    [Key] 
+    public int Id { get; set; }
+    
+    [Column("name")] 
+    [Required] 
+    public string Name { get; set; }
+    
+    [Column("last_name")] 
+    [Required] 
+    public string LastName { get; set; }
+    
+    [Column("passport_number")] 
+    [Required] 
+    public string PassportNumber { get; set; }
+    
+    [Column("address")] 
+    [Required] 
+    public string Address { get; set; }
+    
+    [Column("kyc_state")] 
+    public KycState KycState { get; set; } = KycState.InQueue;
 }
 
 public enum KycState : byte { Confirmed, Rejected, InQueue }
