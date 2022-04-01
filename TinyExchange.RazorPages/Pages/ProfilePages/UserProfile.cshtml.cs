@@ -22,15 +22,20 @@ public class UserProfile : ProfilePage
     
     public async Task<AmountInfo> GetAmountInfo() => await AmountManager.GetAmountInfoForUser(User.GetUserId());
 
-    public async Task OnGetSelfProfileWithMessage(string? message = null)
+    public async Task<IActionResult> OnGetSelfProfileWithMessage(string? message = null)
     {
         ErrorMessage = message;
-        await OnGetSelfProfile();
+        return await OnGetSelfProfile();
     }
 
     // userId may be is not necessary
     public async Task<IActionResult> OnPostMakeDebit(Debit debit, CardInfo cardInfo, int userId)
     {
+        var validResultDebit = !TryValidateModel(debit);
+        var validResultCardInfo = !TryValidateModel(cardInfo);
+        if (validResultDebit || validResultCardInfo)
+            return await OnGetSelfProfileWithMessage("Form is filled with incorrect data");
+
         debit.User = new User {Id = userId};
         debit.Card = cardInfo;
         ErrorMessage = await AmountManager.CreateDebitAsync(debit) switch
@@ -45,6 +50,9 @@ public class UserProfile : ProfilePage
 
     public async Task<IActionResult> OnPostMakeWithdrawal(Withdrawal withdrawal, int userId)
     {
+        if (!TryValidateModel(withdrawal))
+            return Page();
+
         ViewerUser = UserForView = withdrawal.User = await UserManager.FindUserByIdAsync(userId);
         ErrorMessage = await AmountManager.CreateWithdrawal(withdrawal) switch
         {

@@ -14,9 +14,9 @@
                 <label class="form-label">Last Name</label>
                 <input type="text" name="lastname" class="form-text form-control" required/>
                 <label class="form-label">Pasport Number</label>
-                <input type="text" name="pasportnumber" class="form-text form-control" required/>
+                <input type="text" name="PassportNumber" class="form-text form-control" required/>
                 <label class="form-label">Adress</label>
-                <input type="text" name="adress" class="form-text form-control" required/>
+                <input type="text" name="Address" class="form-text form-control" required/>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Send Request</button>
@@ -41,11 +41,11 @@
         <div class="text-body">
             @if (Model.RequesterUser!.KycRequest is { KycState: KycState.Rejected })
             {
-                <h4 class="h4 text-info">Re-send KYC verification Info</h4>
+                <h4 class="h4 text-center text-black">Re-send KYC verification Info</h4>
             }
             else
             {
-                <h4 class="h4 text-info">Send KYC verification Info</h4>
+                <h4 class="h4 text-center text-black">Send KYC verification Info</h4>
             }
         </div>
             <div class="text-center justify-content-center">

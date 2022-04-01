@@ -32,10 +32,14 @@ public class ProfilePage : PageModel
         AvailableProfileRoles = authManager.GetAvailableSystemRoles();
     }
 
-    public Task OnGet() => OnGetSelfProfile();
+    public Task<IActionResult> OnGet() => OnGetSelfProfile();
 
-    public async Task OnGetSelfProfile() =>
+    public async Task<IActionResult> OnGetSelfProfile()
+    {
         ViewerUser = UserForView = await UserManager.FindUserByIdAsync(User.GetUserId());
+        return Page();
+    }
+    
     public async Task<IActionResult> OnGetForeignProfile(int profileId)
     {
         ViewerUser = await UserManager.FindUserByIdAsync(User.GetUserId());

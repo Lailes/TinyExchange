@@ -12,6 +12,7 @@
 
 <form method="post">
     <div class="container">
+        @Html.AntiForgeryToken()
         <label><b>Email</b></label>
         <input type="text" placeholder="Enter Email" name="email" required>
         <label><b>Password</b></label>

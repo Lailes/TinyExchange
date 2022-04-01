@@ -2,8 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TinyExchange.RazorPages.Models.AuthModels;
 
-public record LoginData 
-(
-    [Required] string Email, 
-    [Required] string Password
-);
+public class LoginData
+{
+    [Required] 
+    public string Email { get; set; }
+
+    [Required]
+    public string Password { get; set; }
+}

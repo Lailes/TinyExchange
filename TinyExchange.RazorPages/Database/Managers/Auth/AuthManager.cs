@@ -73,7 +73,7 @@ public class AuthManager : IAuthManager
         };
         await _userManager.AddUserAsync(user);
 
-        await LoginAsync(new LoginData(signUpData.Email, signUpData.Password), httpContext);
+        await LoginAsync(new LoginData { Email = signUpData.Email, Password = signUpData.Password }, httpContext);
         return new OkSignUpResult(user);
     }
 
