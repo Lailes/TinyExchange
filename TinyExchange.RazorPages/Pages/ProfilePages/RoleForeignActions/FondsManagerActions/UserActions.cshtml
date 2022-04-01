@@ -1,6 +1,6 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using TinyExchange.RazorPages.Database.Managers.Amount
-@model TinyExchange.RazorPages.Pages.ProfilePages.FoundsManagerProfile
+@model TinyExchange.RazorPages.Pages.ProfilePages.FondsManagerProfile
 
 @inject IAmountManager AmountManager
 
@@ -16,15 +16,15 @@
 <link rel="stylesheet" asp-href-include="/css/profile.css"/>
 <link rel="stylesheet" asp-href-include="/css/modal.css"/>
 
-<div class="modal fade" id="addFoundsModal" tabindex="-1" aria-labelledby="addFoundsModalLabel" aria-hidden="true">
+<div class="modal fade" id="addFondsModal" tabindex="-1" aria-labelledby="addFondsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered small-padding">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addFoundsModalLabel">Add Amount For User</h5>
+                <h5 class="modal-title" id="addFondsModalLabel">Add Amount For User</h5>
             </div>
-            <form method="post" asp-page-handler="AddFounds">
+            <form method="post" asp-page-handler="AddFonds">
                 <input type="hidden" name="userId" value="@Model.UserForView.Id"/>
-                <input type="hidden" name="foundsManagerId" value="@Model.ViewerUser.Id"/>
+                <input type="hidden" name="fondsManagerId" value="@Model.ViewerUser.Id"/>
                 <input class="form-control form-text" type="number" name="amount" value="0" required />
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -54,7 +54,7 @@
         </div>
 
         <div>
-            <button  class="btn btn-secondary" type="button" data-toggle="modal" data-target="#addFoundsModal">Add Founds</button>
+            <button  class="btn btn-secondary" type="button" data-toggle="modal" data-target="#addFondsModal">Add Fonds</button>
         </div>
     }
 </div>

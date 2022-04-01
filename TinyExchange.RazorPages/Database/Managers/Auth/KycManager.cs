@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
-using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
@@ -21,7 +20,7 @@ public class KycManager : IKycManager
     {
         var user = await _userManager.FindUserByIdAsync(userId, false);
         user.KycRequest = kycRequest;
-        await _userManager.ModifyUserAsync(user);
+        await _userManager.ModifyUserAsync(user, true);
     }
 
     public IQueryable<User> QueryUsersWithRequests(KycState[]? kycStates = null) =>

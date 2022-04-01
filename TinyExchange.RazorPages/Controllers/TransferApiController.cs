@@ -12,7 +12,7 @@ namespace TinyExchange.RazorPages.Controllers;
 public class TransferApiController : Controller
 {
     [HttpPost("debits/cancel")]
-    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}", Policy = KycClaimSettings.PolicyName)]
+    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FondsManager}", Policy = KycClaimSettings.PolicyName)]
     public async Task CancelTransfer([FromServices] IAmountManager amountManager, int transferId, int userId) =>
         Response.StatusCode = await amountManager.CancelDebitAsync(transferId, userId) switch
         {
@@ -23,7 +23,7 @@ public class TransferApiController : Controller
         };
 
     [HttpPost("withdrawals/cancel")]
-    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}", Policy = KycClaimSettings.PolicyName)]
+    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FondsManager}", Policy = KycClaimSettings.PolicyName)]
     public async Task CancelWithdrawal([FromServices] IAmountManager amountManager, int transferId, int userId) =>
         Response.StatusCode = await amountManager.CancelWithdrawalAsync(transferId, userId) switch
             {
@@ -34,7 +34,7 @@ public class TransferApiController : Controller
             };
 
     [HttpPost("debits/confirm")]
-    [Authorize(Roles = SystemRoles.FoundsManager, Policy = KycClaimSettings.PolicyName)]
+    [Authorize(Roles = SystemRoles.FondsManager, Policy = KycClaimSettings.PolicyName)]
     public async Task ConfirmDebit([FromServices] IAmountManager amountManager, int transferId, int userId) =>
         Response.StatusCode =
             await amountManager.ConfirmDebitAsync(transferId, userId) switch
@@ -47,7 +47,7 @@ public class TransferApiController : Controller
 
 
     [HttpPost("withdrawals/confirm")]
-    [Authorize(Roles = SystemRoles.FoundsManager, Policy = KycClaimSettings.PolicyName)]
+    [Authorize(Roles = SystemRoles.FondsManager, Policy = KycClaimSettings.PolicyName)]
     public async Task ConfirmWithdrawal([FromServices] IAmountManager amountManager, int transferId, int userId) =>
         Response.StatusCode = await amountManager.ConfirmWithdrawalAsync(transferId, userId) switch
             {

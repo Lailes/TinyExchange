@@ -84,7 +84,7 @@ public class AuthManager : IAuthManager
 
     public IList<string> GetAvailableSystemRoles() => SystemRoles.AllRoles;
 
-    private static string ComputeHash(string line)
+    public static string ComputeHash(string line)
     {
         using var md5 = MD5.Create();
         var hash = md5.ComputeHash(Encoding.Default.GetBytes(line));

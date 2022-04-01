@@ -41,7 +41,7 @@ public class UserManager : IUserManager
         await _context.SaveChangesAsync();
     }
 
-    public async Task<ModifyUserResult> ModifyUserAsync(User user)
+    public async Task<ModifyUserResult> ModifyUserAsync(User user, bool isSelfEdit)
     {
         var databaseEntity = await FindUserByIdOrDefaultAsync(user.Id, false);
         if (databaseEntity == null) 
@@ -50,8 +50,11 @@ public class UserManager : IUserManager
         databaseEntity.Email = user.Email;
         databaseEntity.FirstName = user.FirstName;
         databaseEntity.LastName = user.LastName;
-        databaseEntity.Role = user.Role;
         databaseEntity.KycRequest ??= user.KycRequest;
+
+        if (!isSelfEdit) 
+            databaseEntity.Role = user.Role;
+        
         await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;
     }

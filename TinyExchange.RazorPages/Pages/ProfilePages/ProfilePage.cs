@@ -55,7 +55,7 @@ public class ProfilePage : PageModel
 
     public async Task<IActionResult> OnPostEditSelfUser(User user)
     {
-        await UserManager.ModifyUserAsync(user);
+        await UserManager.ModifyUserAsync(user, isSelfEdit: true);
         ViewerUser = UserForView = await UserManager.FindUserByIdAsync(user.Id);
         return Page();
     }

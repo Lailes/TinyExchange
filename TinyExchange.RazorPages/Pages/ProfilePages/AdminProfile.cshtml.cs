@@ -30,7 +30,7 @@ public class AdminProfile : ProfilePage
     
     public async Task OnPostEditForeignUser(User user, int adminId)
     {
-        await UserManager.ModifyUserAsync(user);
+        await UserManager.ModifyUserAsync(user, isSelfEdit: false);
         ViewerUser = await UserManager.FindUserByIdAsync(adminId); 
         UserForView = user;
     }
