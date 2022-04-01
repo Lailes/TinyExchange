@@ -16,7 +16,7 @@ async function cancelTransfer(transferID, cancelerID, url) {
         },
         body: JSON.stringify({
             transferId: transferID,
-            cancelerId: cancelerID
+            userId: cancelerID
         })
     })
     
