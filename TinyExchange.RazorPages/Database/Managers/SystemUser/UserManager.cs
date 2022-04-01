@@ -65,15 +65,14 @@ public class UserManager : IUserManager
         return AssignRoleResult.Ok;
     }
 
-    public async Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount, string[] systemRoles) =>
-        (await _context
+    public IQueryable<User> QueryUsersAsync(int count, int skipCount, string[] systemRoles) =>
+        _context
             .Users
             .OrderBy(user => user.Id)
             .Where(u => systemRoles.Contains(u.Role))
             .Skip(skipCount)
             .Take(count)
-            .ToListAsync())
-        .Select(user => user.RemoveSensitiveData());
+            .Select(user => user.RemoveSensitiveData());
 
     public Task<int> UserCountAsync() => _context.Users.CountAsync();
     

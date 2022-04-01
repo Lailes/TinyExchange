@@ -44,8 +44,11 @@ public class AmountManager : IAmountManager
         return DebitResult.Ok;
     }
 
-    private async Task<CardInfo> UpdateCard(CardInfo cardInfo)
+    private async Task<CardInfo?> UpdateCard(CardInfo? cardInfo)
     {
+        if (cardInfo == null)
+            return null;
+        
         var dbCard = await _context.CardInfos.FirstOrDefaultAsync(c => c.CardNumber == cardInfo.CardNumber);
         if (dbCard == null)
             return cardInfo;
@@ -75,8 +78,8 @@ public class AmountManager : IAmountManager
 
     public async Task<AmountInfo> GetAmountInfoForUser(int userId)
     {
-        var debits = await ListDebitsForUser(userId);
-        var withdrawls = await ListWithdrawalsForUser(userId);
+        var debits = await QueryDebitsForUser(userId).ToListAsync();
+        var withdrawls = await QueryWithdrawalsForUser(userId).ToListAsync();
 
         return new AmountInfo(
             amount: debits.Where(d => d.DebitState == DebitState.Confirmed).Sum(d => d.Amount) - withdrawls.Where(w => w.WithdrawalState == WithdrawalState.Confirmed).Sum(w => w.Amount),
@@ -153,39 +156,36 @@ public class AmountManager : IAmountManager
         return ConfirmWithdrawalResult.Ok;
     }
 
-    public async Task<IList<Debit>> ListDebitsForUser(int userId, DebitState[]? stateFilter = null) =>
-        await _context
+    public IQueryable<Debit> QueryDebitsForUser(int userId, DebitState[]? stateFilter = null) =>
+        _context
             .Debits
             .Include(d => d.User)
             .Where(d => d.User.Id == userId && (stateFilter == null || stateFilter.Contains(d.DebitState)))
             .OrderBy(d => d.Id)
-            .Include(d => d.Card)
-            .ToListAsync();
+            .Include(d => d.Card);
 
-    public async Task<IList<Withdrawal>> ListWithdrawalsForUser(int userId, WithdrawalState[]? stateFilter = null) =>
-        await _context
+    public IQueryable<Withdrawal> QueryWithdrawalsForUser(int userId, WithdrawalState[]? stateFilter = null) =>
+        _context
             .Withdrawals
             .Include(w => w.User)
             .Where(w => w.User.Id == userId && (stateFilter == null || stateFilter.Contains(w.WithdrawalState)))
-            .OrderBy(w=> w.Id)
-            .ToListAsync();
-
-    public async Task<IList<Debit>> ListDebits(DebitState[]? debitStates = null) =>
-        await _context
+            .OrderBy(w => w.Id);
+    
+    public IQueryable<Debit> QueryDebits(DebitState[]? stateFilter = null) =>
+        _context
             .Debits
-            .Where(d => debitStates == null || debitStates.Contains(d.DebitState))
+            .Where(d => stateFilter == null || stateFilter.Contains(d.DebitState))
             .Include(d => d.User)
             .Include(d => d.Card)
             .OrderBy(d => d.Id)
-            .ToListAsync();
+            .Where(d => d.Card != null);
 
-    public async Task<IList<Withdrawal>> ListWithdrawals(WithdrawalState[]? withdrawalStates = null) =>
-        await _context
+    public IQueryable<Withdrawal> QueryWithdrawals(WithdrawalState[]? stateFilter = null) =>
+        _context
             .Withdrawals
-            .Where(w => withdrawalStates == null || withdrawalStates.Contains(w.WithdrawalState))
+            .Where(w => stateFilter == null || stateFilter.Contains(w.WithdrawalState))
             .Include(w => w.User)
-            .OrderBy(w => w.Id)
-            .ToListAsync();
+            .OrderBy(w => w.Id);
 
     public async Task<AddDebitResult> AddAmount(decimal amount, int userId)
     {
@@ -198,9 +198,7 @@ public class AmountManager : IAmountManager
             User = await _userManager.FindUserByIdAsync(userId, anonimize: false),
             DateTime = DateTime.UtcNow,
             DebitState = DebitState.Confirmed,
-            DebitType = DebitType.ByFoundsManager,
-            Card = await UpdateCard(new CardInfo
-                {CardNumber = "0000 0000 0000 0000", Cvv = 000, ExpireDate = "00/00", Holder = "SYSTEM"})
+            DebitType = DebitType.ByFoundsManager
         });
         await _context.SaveChangesAsync();
         return AddDebitResult.Ok;

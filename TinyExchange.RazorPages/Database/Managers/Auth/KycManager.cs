@@ -24,13 +24,12 @@ public class KycManager : IKycManager
         await _userManager.ModifyUserAsync(user);
     }
 
-    public async Task<IList<User>> ListUsersWithRequests(KycState[]? kycStates = null) =>
-        await _context
+    public IQueryable<User> QueryUsersWithRequests(KycState[]? kycStates = null) =>
+        _context
             .Users
             .Include(u => u.KycRequest)
-            .Where(u => kycStates == null || (u.KycRequest != null && kycStates.Contains(u.KycRequest.KycState)))
-            .ToListAsync();
-
+            .Where(u => kycStates == null || (u.KycRequest != null && kycStates.Contains(u.KycRequest.KycState)));
+    
     public async Task<ChangeKycStateResult> ChangeStateKyc(int kycId, KycState kycState)
     {
         var request = await _context.KycUserRequests.FirstOrDefaultAsync(k => k.Id == kycId);

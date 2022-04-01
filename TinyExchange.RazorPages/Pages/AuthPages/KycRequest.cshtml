@@ -1,5 +1,4 @@
 @page "/kyc-request"
-@using TinyExchange.RazorPages.Infrastructure.Authentication
 @model TinyExchange.RazorPages.Pages.AuthPages.KycRequest
 
 
@@ -17,7 +16,7 @@
                 <label class="form-label">Pasport Number</label>
                 <input type="text" name="pasportnumber" class="form-text form-control" required/>
                 <label class="form-label">Adress</label>
-                <input type="number" name="adress" class="form-text form-control" required/>
+                <input type="text" name="adress" class="form-text form-control" required/>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Send Request</button>

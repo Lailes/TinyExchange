@@ -11,11 +11,11 @@ public interface IAmountManager
     Task<WithdrawalCancelResult> CancelWithdrawalAsync(int transferId, int cancelerId);
     Task<ConfirmDebitResult> ConfirmDebitAsync(int transferId, int confirmerId);
     Task<ConfirmWithdrawalResult> ConfirmWithdrawalAsync(int transferId, int confirmerId);
-    Task<IList<Debit>> ListDebitsForUser(int userId, DebitState[]? stateFilter = null);
-    Task<IList<Withdrawal>> ListWithdrawalsForUser(int userId, WithdrawalState[]? stateFilter = null);
-    Task<IList<Debit>> ListDebits(DebitState[]? debitStates = null);
-    Task<IList<Withdrawal>> ListWithdrawals(WithdrawalState[]? withdrawalStates = null); 
     Task<AddDebitResult> AddAmount(decimal amount, int userId);
+    IQueryable<Debit> QueryDebitsForUser(int userId, DebitState[]? stateFilter = null);
+    IQueryable<Withdrawal> QueryWithdrawalsForUser(int userId, WithdrawalState[]? stateFilter = null);
+    IQueryable<Debit> QueryDebits(DebitState[]? stateFilter = null);
+    IQueryable<Withdrawal> QueryWithdrawals(WithdrawalState[]? stateFilter = null); 
 }
 
 public enum DebitResult : byte { Ok, Fail }
