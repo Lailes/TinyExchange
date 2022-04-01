@@ -18,5 +18,11 @@ public sealed class ApplicationContext : DbContext
     public DbSet<CardInfo> CardInfos { get; set; }
     public DbSet<KycUserRequest> KycUserRequests { get; set; }
 
-    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) => Database.EnsureCreated();
+    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+    { 
+        Database.EnsureCreated();
+        if (Users != null && !Users.Any()) 
+            Seeder.SeedUsers(this);
+    }
+    
 }
