@@ -35,8 +35,8 @@ public class UserProfile : ProfilePage
         debit.Card = cardInfo;
         ErrorMessage = await AmountManager.CreateDebitAsync(debit) switch
         {
-            DebitResult.Fail => "Debit creation is failed",
             DebitResult.Ok => null,
+            DebitResult.Banned => "User Is Banned",
             _ => throw new ArgumentOutOfRangeException()
         };
         ViewerUser = UserForView = await UserManager.FindUserByIdAsync(userId);
