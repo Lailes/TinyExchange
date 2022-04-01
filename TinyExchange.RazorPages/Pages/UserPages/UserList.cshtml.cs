@@ -10,7 +10,7 @@ namespace TinyExchange.RazorPages.Pages.UserPages;
 
 public class UserList : PageModel
 {
-    public User Viewer { get; set; } = Models.UserModels.User.StubUser;
+    public User? Viewer { get; set; }
     
     public int TotalUsersCount { get; private set; }
 

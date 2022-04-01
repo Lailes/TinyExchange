@@ -16,8 +16,8 @@ public class TransferList : PageModel
     private readonly IUserManager _userManager;
     private readonly IAmountManager _amountManager;
 
-    public User TransfersOwner { get; set; } = Models.UserModels.User.StubUser;
-    public User ViewerUser { get; set; } = Models.UserModels.User.StubUser;
+    public User? TransfersOwner { get; set; }
+    public User? ViewerUser { get; set; }
     public IList<Debit> Debits { get; private set; } = Enumerable.Empty<Debit>().ToList();
     
     public TransferList(IUserManager userManager, IAmountManager amountManager)

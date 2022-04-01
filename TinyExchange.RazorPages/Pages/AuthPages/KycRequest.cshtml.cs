@@ -42,5 +42,6 @@ public class KycRequest : PageModel
     }
 
     public bool RequestIsNeeded =>
-        RequesterUser.KycRequest == null || RequesterUser.KycRequest.KycState == KycState.Rejected;
+        RequesterUser != null &&
+        (RequesterUser.KycRequest == null || RequesterUser.KycRequest.KycState == KycState.Rejected);
 }

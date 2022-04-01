@@ -3,6 +3,11 @@
 @model TinyExchange.RazorPages.Pages.UserPages.UserList
 @addTagHelper *, TinyExchange.RazorPages
 
+@{
+    if (Model.Viewer == null)
+        throw new ArgumentNullException(nameof(Model.Viewer));
+}
+
 <div>
     <div>
         <table class="table">

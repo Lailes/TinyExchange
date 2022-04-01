@@ -5,6 +5,11 @@
 <link rel="stylesheet" asp-href-include="css/list.css"/>
 <script asp-src-include="js/requests.js"></script>
 
+@{
+    if (Model.ViewerUser == null)
+        throw new ArgumentNullException(nameof(Model.ViewerUser));
+}
+
 @functions 
 {
     private static string StringStatus(DebitState debitState) =>
@@ -35,6 +40,10 @@
             <tbody id="tableBody">
                 @foreach (var debit in Model.Debits)
                 {
+                    @if (debit.Card == null)
+                    {
+                        continue;
+                    }
                     <tr id=@($"row{debit.Id}")>
                         <td>@debit.Amount</td>
                         <td>@debit.User.Email</td>

@@ -5,6 +5,14 @@
 <link rel="stylesheet" asp-href-include="/css/profile.css"/>
 <link rel="stylesheet" asp-href-include="/css/modal.css"/>
 
+@{
+    if (Model.ViewerUser == null)
+        throw new ArgumentNullException(nameof(Model.ViewerUser));
+    
+    if (Model.UserForView == null)
+        throw new ArgumentNullException(nameof(Model.UserForView));
+}
+
 <div class="justify-content-center">
     <div>
         <h3 class="text-center">Profile info:</h3>

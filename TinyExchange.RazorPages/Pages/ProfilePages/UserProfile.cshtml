@@ -7,7 +7,15 @@
 <link rel="stylesheet" asp-href-include="/css/profile.css"/>
 <link rel="stylesheet" asp-href-include="/css/modal.css"/>
 
-@{ var amountInfo = await Model.GetAmountInfo(); }
+@{
+    var amountInfo = await Model.GetAmountInfo();
+    
+    if (Model.ViewerUser == null)
+        throw new ArgumentNullException(nameof(Model.ViewerUser));
+    
+    if (Model.UserForView == null)
+        throw new ArgumentNullException(nameof(Model.UserForView));
+}
 
 <div class="modal fade" id="debitModal" tabindex="-1" aria-labelledby="debitModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered small-padding">

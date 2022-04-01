@@ -16,8 +16,8 @@ public class WithdrawalList : PageModel
     private readonly IUserManager _userManager;
     private readonly IAmountManager _amountManager;
 
-    public User TransfersOwner { get; set; } = Models.UserModels.User.StubUser;
-    public User ViewerUser { get; set; } = Models.UserModels.User.StubUser;
+    public User? TransfersOwner { get; set; }
+    public User? ViewerUser { get; set; }
     public IList<Withdrawal> Withdrawals { get; private set; } = Enumerable.Empty<Withdrawal>().ToList();
     
     public WithdrawalList(IUserManager userManager, IAmountManager amountManager)

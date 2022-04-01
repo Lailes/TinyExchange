@@ -1,7 +1,6 @@
-@using TinyExchange.RazorPages.Infrastructure.Authentication
 @model TinyExchange.RazorPages.Pages.ProfilePages.KycManagerProfile
 
-@{ var kycRequest = Model.UserForView.KycRequest; }
+@{ var kycRequest = Model.UserForView?.KycRequest; }
 
 <div>
     @if (kycRequest != null)

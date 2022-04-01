@@ -6,6 +6,11 @@
 <link rel="stylesheet" asp-href-include="css/list.css"/>
 <script asp-src-include="js/requests.js"></script>
 
+@{
+    if (Model.ViewerUser == null)
+        throw new ArgumentNullException(nameof(Model.ViewerUser));
+}
+
 @functions 
 {
     private static string StringStatus(WithdrawalState debitState) =>

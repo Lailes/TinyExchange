@@ -1,5 +1,13 @@
 @model TinyExchange.RazorPages.Pages.ProfilePages.AdminProfile
 
+@{
+    if (Model.UserForView == null)
+        throw new ArgumentNullException(nameof(Model.UserForView));
+    
+    if (Model.ViewerUser == null)
+        throw new ArgumentNullException(nameof(Model.ViewerUser));
+}
+
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered small-padding">
         <div class="modal-content">

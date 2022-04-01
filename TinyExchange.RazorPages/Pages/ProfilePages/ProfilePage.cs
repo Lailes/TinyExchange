@@ -17,11 +17,12 @@ public class ProfilePage : PageModel
     protected readonly IBlockingManager BlockingManager;
     protected readonly IAmountManager AmountManager;
 
-    public User ViewerUser { get; set; } = Models.UserModels.User.StubUser;
-    public User UserForView { get; protected set; } = Models.UserModels.User.StubUser;
+    public User? ViewerUser { get; set; }
+    public User? UserForView { get; protected set; }
     public UserBlock? UserBlock { get; protected set; }
     public IList<string> AvailableProfileRoles { get; }
-    public bool SelfView => ViewerUser.Id == UserForView.Id;
+    
+    public bool SelfView => ViewerUser?.Id == UserForView?.Id;
     
     public ProfilePage(IUserManager userManager, IBlockingManager blockingManager, IAuthManager authManager, IAmountManager amountManager)
     {

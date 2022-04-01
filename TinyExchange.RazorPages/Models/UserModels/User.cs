@@ -40,10 +40,4 @@ public class User
         PasswordHash = null;
         return this;
     }
-
-    public static User StubUser => new() {
-        RegisteredAt = DateTime.MinValue,
-        Role = "Stub",
-        PasswordHash = string.Empty
-    };
 }
