@@ -8,13 +8,13 @@ using TinyExchange.RazorPages.Models.AuthModels;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
 
-[Authorize(Roles = SystemRoles.FondsManager, Policy = KycClaimSettings.PolicyName)]
-public class FondsManagerProfile : ProfilePage
+[Authorize(Roles = SystemRoles.FundsManager, Policy = KycClaimSettings.PolicyName)]
+public class FundsManagerProfile : ProfilePage
 {
-    public FondsManagerProfile(IUserManager userManager, IBlockingManager blockingManager, IAuthManager authManager, IAmountManager amountManager) : 
+    public FundsManagerProfile(IUserManager userManager, IBlockingManager blockingManager, IAuthManager authManager, IAmountManager amountManager) : 
         base(userManager, blockingManager, authManager, amountManager) { }
     
-    public async Task<IActionResult> OnPostAddFonds(int userId, int fondsManagerId, decimal amount)
+    public async Task<IActionResult> OnPostAddFunds(int userId, int fundsManagerId, decimal amount)
     {
         await AmountManager.AddAmount(amount, userId);
         return await OnGetForeignProfile(userId);

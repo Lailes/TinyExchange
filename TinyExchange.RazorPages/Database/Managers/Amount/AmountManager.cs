@@ -198,7 +198,7 @@ public class AmountManager : IAmountManager
             User = await _userManager.FindUserByIdAsync(userId, anonimize: false),
             DateTime = DateTime.UtcNow,
             DebitState = DebitState.Confirmed,
-            DebitType = DebitType.ByFondsManager
+            DebitType = DebitType.ByFundsManager
         });
         await _context.SaveChangesAsync();
         return AddDebitResult.Ok;

@@ -19,4 +19,4 @@ public class Debit
 }
 
 public enum DebitState : byte { Confirmed, NotConfirmed, InQueue }
-public enum DebitType : byte { ByUser, ByFondsManager }
+public enum DebitType : byte { ByUser, ByFundsManager }

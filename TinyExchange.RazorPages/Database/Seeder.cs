@@ -47,12 +47,12 @@ public static class Seeder
         context.Add(userUser);
         context.SaveChanges();
 
-        var userFonds = new User
+        var userFunds = new User
         {
             FirstName = "Morgan", LastName = "Yu",
-            Email = "fonds", PasswordHash = AuthManager.ComputeHash("1"),
+            Email = "funds", PasswordHash = AuthManager.ComputeHash("1"),
             RegisteredAt = DateTime.UtcNow,
-            Role = SystemRoles.FondsManager,
+            Role = SystemRoles.FundsManager,
             KycRequest = new KycUserRequest
             {
                 Address = "Some Where",
@@ -62,7 +62,7 @@ public static class Seeder
                 PassportNumber = "123456"
             }
         };
-        context.Add(userFonds);
+        context.Add(userFunds);
         context.SaveChanges();
 
         var userKyc = new User
