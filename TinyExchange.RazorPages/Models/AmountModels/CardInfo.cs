@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TinyExchange.RazorPages.Models.AmountModels.DTO;
 
 namespace TinyExchange.RazorPages.Models.AmountModels;
 
@@ -9,22 +10,23 @@ namespace TinyExchange.RazorPages.Models.AmountModels;
 public class CardInfo
 {
     [Column("card_number")][Key]
-    [Required]
     public string CardNumber { get; set; } = string.Empty;
     
     [Column("expire_date")] 
-    [MinLength(5)]
-    [MaxLength(5)]
-    [RegularExpression(@"\d{2}/\d{2}")]
-    [Required]
     public string ExpireDate { get; set; } = string.Empty;
      
     [Column("cvv")]
-    [Range(0, 999)]
-    [Required]
     public int Cvv { get; set; }
     
     [Column("holder")]
-    [Required]
     public string Holder { get; set; } = string.Empty;
+
+    public static CardInfo FromModel(CardInfoModel model) =>
+        new()
+        {
+            CardNumber = model.CardNumber,
+            Cvv = model.Cvv,
+            ExpireDate = model.ExpireDate,
+            Holder = model.Holder
+        };
 }

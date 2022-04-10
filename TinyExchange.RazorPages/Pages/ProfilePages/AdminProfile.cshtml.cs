@@ -5,6 +5,7 @@ using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
+using TinyExchange.RazorPages.Models.UserModels.DTO;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
 
@@ -28,10 +29,10 @@ public class AdminProfile : ProfilePage
         UserForView = await UserManager.FindUserByIdAsync(userId);
     }
     
-    public async Task OnPostEditForeignUser(User user, int adminId)
+    public async Task OnPostEditForeignUser(AdminEditInfoModelModel user, int adminId)
     {
-        await UserManager.ModifyUserAsync(user, isSelfEdit: false);
+        await UserManager.ModifyUserAsync(user);
         ViewerUser = await UserManager.FindUserByIdAsync(adminId); 
-        UserForView = user;
+        UserForView = await UserManager.FindUserByIdAsync(user.Id);
     }
 }

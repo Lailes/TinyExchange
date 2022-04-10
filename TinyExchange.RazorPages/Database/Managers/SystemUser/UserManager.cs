@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Infrastructure.Exceptions;
+using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
+using TinyExchange.RazorPages.Models.UserModels.DTO;
+using TinyExchange.RazorPages.Pages.AuthPages;
 
 namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
 
@@ -41,19 +44,42 @@ public class UserManager : IUserManager
         await _context.SaveChangesAsync();
     }
 
-    public async Task<ModifyUserResult> ModifyUserAsync(User user, bool isSelfEdit)
+    public async Task<ModifyUserResult> ModifyUserAsync(UserEditInfoModel infoModel)
+    {
+        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModel.Id, false);
+        if (databaseEntity == null) 
+            return ModifyUserResult.UserNotFound;
+        
+        databaseEntity.Email = infoModel.Email;
+        databaseEntity.FirstName = infoModel.FirstName;
+        databaseEntity.LastName = infoModel.LastName;
+        
+        await _context.SaveChangesAsync();
+        return ModifyUserResult.Changed;
+    }
+
+    public async Task<ModifyUserResult> ModifyUserAsync(AdminEditInfoModelModel infoModelModel)
+    {
+        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModelModel.Id, false);
+        if (databaseEntity == null) 
+            return ModifyUserResult.UserNotFound;
+        
+        databaseEntity.Email = infoModelModel.Email;
+        databaseEntity.FirstName = infoModelModel.FirstName;
+        databaseEntity.LastName = infoModelModel.LastName;
+        databaseEntity.Role = infoModelModel.Role;
+        
+        await _context.SaveChangesAsync();
+        return ModifyUserResult.Changed;
+    }
+
+    public async Task<ModifyUserResult> ModifyUserAsync(User user, KycUserRequest kycRequest)
     {
         var databaseEntity = await FindUserByIdOrDefaultAsync(user.Id, false);
         if (databaseEntity == null) 
             return ModifyUserResult.UserNotFound;
-        
-        databaseEntity.Email = user.Email;
-        databaseEntity.FirstName = user.FirstName;
-        databaseEntity.LastName = user.LastName;
-        databaseEntity.KycRequest ??= user.KycRequest;
 
-        if (!isSelfEdit) 
-            databaseEntity.Role = user.Role;
+        user.KycRequest = kycRequest;
         
         await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;

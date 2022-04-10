@@ -7,6 +7,7 @@ using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.AmountModels;
+using TinyExchange.RazorPages.Models.AmountModels.DTO;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
@@ -28,32 +29,41 @@ public class UserProfile : ProfilePage
         return await OnGetSelfProfile();
     }
 
-    // userId may be is not necessary
-    public async Task<IActionResult> OnPostMakeDebit(Debit debit, CardInfo cardInfo, int userId)
+    public async Task<IActionResult> OnPostMakeDebit(DebitModel debitModel, CardInfoModel cardInfoModel, int userId)
     {
-        var validResultDebit = !TryValidateModel(debit);
-        var validResultCardInfo = !TryValidateModel(cardInfo);
+        var validResultDebit = !TryValidateModel(debitModel);
+        var validResultCardInfo = !TryValidateModel(cardInfoModel);
         if (validResultDebit || validResultCardInfo)
             return await OnGetSelfProfileWithMessage("Form is filled with incorrect data");
 
-        debit.User = new User {Id = userId};
-        debit.Card = cardInfo;
+        var debit = Debit.FromModel(
+            debitModel,
+            new User { Id = userId },
+            CardInfo.FromModel(cardInfoModel)
+        );
+        
         ErrorMessage = await AmountManager.CreateDebitAsync(debit) switch
         {
             DebitResult.Ok => null,
             DebitResult.Banned => "User Is Banned",
             _ => throw new ArgumentOutOfRangeException()
         };
+        
         ViewerUser = UserForView = await UserManager.FindUserByIdAsync(userId);
         return RedirectToPage("../ProfilePages/UserProfile",  "SelfProfileWithMessage", new { message = ErrorMessage });
     }
 
-    public async Task<IActionResult> OnPostMakeWithdrawal(Withdrawal withdrawal, int userId)
+    public async Task<IActionResult> OnPostMakeWithdrawal(WithdrawalModel withdrawalModel)
     {
-        if (!TryValidateModel(withdrawal))
+        if (!TryValidateModel(withdrawalModel))
             return Page();
+        
+        var withdrawal = Withdrawal.FromModel(
+            withdrawalModel,
+            await UserManager.FindUserByIdAsync(withdrawalModel.UserId)
+        );
 
-        ViewerUser = UserForView = withdrawal.User = await UserManager.FindUserByIdAsync(userId);
+        ViewerUser = UserForView = withdrawal.User;
         ErrorMessage = await AmountManager.CreateWithdrawal(withdrawal) switch
         {
             WithdrawalResult.Ok => null,

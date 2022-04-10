@@ -40,7 +40,7 @@ public class TransferApiController : Controller
             await amountManager.ConfirmDebitAsync(transferId, userId) switch
             {
                 ConfirmDebitResult.Ok => StatusCodes.Status200OK,
-                ConfirmDebitResult.NotFound => StatusCodes.Status405MethodNotAllowed,
+                ConfirmDebitResult.NotFound => StatusCodes.Status400BadRequest,
                 ConfirmDebitResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
                 _ => throw new ArgumentOutOfRangeException()
             };
@@ -52,7 +52,7 @@ public class TransferApiController : Controller
         Response.StatusCode = await amountManager.ConfirmWithdrawalAsync(transferId, userId) switch
             {
                 ConfirmWithdrawalResult.Ok => StatusCodes.Status200OK,
-                ConfirmWithdrawalResult.NotFound => StatusCodes.Status405MethodNotAllowed,
+                ConfirmWithdrawalResult.NotFound => StatusCodes.Status400BadRequest,
                 ConfirmWithdrawalResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
                 _ => throw new ArgumentOutOfRangeException()
             };

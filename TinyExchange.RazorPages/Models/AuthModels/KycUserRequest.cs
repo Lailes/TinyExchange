@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TinyExchange.RazorPages.Models.AuthModels.DTO;
+using TinyExchange.RazorPages.Pages.AuthPages;
 
 #pragma warning disable CS8618
 namespace TinyExchange.RazorPages.Models.AuthModels;
@@ -29,6 +31,17 @@ public sealed class KycUserRequest
     
     [Column("kyc_state")] 
     public KycState KycState { get; set; } = KycState.InQueue;
+
+    public static KycUserRequest FromModel(KycRequestModel model) =>
+        new()
+        {
+            Id = model.Id,
+            Name = model.Name,
+            LastName = model.LastName,
+            Address = model.LastName,
+            KycState = model.KycState,
+            PassportNumber = model.PassportNumber
+        };
 }
 
 public enum KycState : byte { Confirmed, Rejected, InQueue }

@@ -7,6 +7,7 @@ using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.UserModels;
+using TinyExchange.RazorPages.Models.UserModels.DTO;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
 
@@ -41,7 +42,7 @@ public class ProfilePage : PageModel
     }
     
     public async Task<IActionResult> OnGetForeignProfile(int profileId)
-    {
+    { 
         ViewerUser = await UserManager.FindUserByIdAsync(User.GetUserId());
         
         var profile = await UserManager.FindUserByIdOrDefaultAsync(profileId);
@@ -53,10 +54,10 @@ public class ProfilePage : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostEditSelfUser(User user)
+    public async Task<IActionResult> OnPostEditSelfUser(UserEditInfoModel editInfoModel)
     {
-        await UserManager.ModifyUserAsync(user, isSelfEdit: true);
-        ViewerUser = UserForView = await UserManager.FindUserByIdAsync(user.Id);
+        await UserManager.ModifyUserAsync(editInfoModel);
+        ViewerUser = UserForView = await UserManager.FindUserByIdAsync(editInfoModel.Id);
         return Page();
     }
 }

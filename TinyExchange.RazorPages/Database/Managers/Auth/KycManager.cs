@@ -19,8 +19,7 @@ public class KycManager : IKycManager
     public async Task AddKycRequestInQueueAsync(KycUserRequest kycRequest, int userId)
     {
         var user = await _userManager.FindUserByIdAsync(userId, false);
-        user.KycRequest = kycRequest;
-        await _userManager.ModifyUserAsync(user, true);
+        await _userManager.ModifyUserAsync(user, kycRequest);
     }
 
     public IQueryable<User> QueryUsersWithRequests(KycState[]? kycStates = null) =>
