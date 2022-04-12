@@ -17,9 +17,9 @@ public class TransferApiController : Controller
         Response.StatusCode = await amountManager.CancelDebitAsync(transferId, userId) switch
         {
             DebitCancelResult.Ok => StatusCodes.Status200OK,
-            DebitCancelResult.NotFound => StatusCodes.Status400BadRequest,
+            DebitCancelResult.NotFound => StatusCodes.Status404NotFound,
             DebitCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => StatusCodes.Status500InternalServerError
         };
 
     [HttpPost("withdrawals/cancel")]
@@ -28,9 +28,9 @@ public class TransferApiController : Controller
         Response.StatusCode = await amountManager.CancelWithdrawalAsync(transferId, userId) switch
             {
                 WithdrawalCancelResult.Ok => StatusCodes.Status200OK,
-                WithdrawalCancelResult.NotFound => StatusCodes.Status400BadRequest,
+                WithdrawalCancelResult.NotFound => StatusCodes.Status404NotFound,
                 WithdrawalCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => StatusCodes.Status500InternalServerError
             };
 
     [HttpPost("debits/confirm")]
@@ -40,9 +40,9 @@ public class TransferApiController : Controller
             await amountManager.ConfirmDebitAsync(transferId, userId) switch
             {
                 ConfirmDebitResult.Ok => StatusCodes.Status200OK,
-                ConfirmDebitResult.NotFound => StatusCodes.Status400BadRequest,
+                ConfirmDebitResult.NotFound => StatusCodes.Status404NotFound,
                 ConfirmDebitResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => StatusCodes.Status500InternalServerError
             };
 
 
@@ -52,8 +52,8 @@ public class TransferApiController : Controller
         Response.StatusCode = await amountManager.ConfirmWithdrawalAsync(transferId, userId) switch
             {
                 ConfirmWithdrawalResult.Ok => StatusCodes.Status200OK,
-                ConfirmWithdrawalResult.NotFound => StatusCodes.Status400BadRequest,
+                ConfirmWithdrawalResult.NotFound => StatusCodes.Status404NotFound,
                 ConfirmWithdrawalResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => StatusCodes.Status500InternalServerError
             };
 }
