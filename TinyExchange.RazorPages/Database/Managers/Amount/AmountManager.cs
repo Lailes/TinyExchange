@@ -33,7 +33,7 @@ public class AmountManager : IAmountManager
 
     public async Task<DebitResult> CreateDebitAsync(Debit debit)
     {
-        if (await _blockingManager.GetUserBlockAsync(debit.User.Id) != null)
+        if (await _blockingManager.CheckIsUserBlockedAsync(debit.User.Id) != null)
             return DebitResult.Banned;
 
         debit.DateTime = DateTime.UtcNow;
@@ -62,7 +62,7 @@ public class AmountManager : IAmountManager
 
     public async Task<WithdrawalResult> CreateWithdrawal(Withdrawal withdrawal)
     {
-        if (await _blockingManager.GetUserBlockAsync(withdrawal.User.Id) != null)
+        if (await _blockingManager.CheckIsUserBlockedAsync(withdrawal.User.Id) != null)
             return WithdrawalResult.Banned;
         
         var userAmountInfo = await GetAmountInfoForUser(withdrawal.User.Id);
@@ -189,7 +189,7 @@ public class AmountManager : IAmountManager
 
     public async Task<AddDebitResult> AddAmount(decimal amount, int userId)
     {
-        if (await _blockingManager.GetUserBlockAsync(userId) != null) 
+        if (await _blockingManager.CheckIsUserBlockedAsync(userId) != null) 
             return AddDebitResult.UserIsBanned;
 
         _context.Debits.Add(new Debit

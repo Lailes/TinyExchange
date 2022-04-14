@@ -20,7 +20,6 @@ public class ProfilePage : PageModel
 
     public User? ViewerUser { get; set; }
     public User? UserForView { get; protected set; }
-    public UserBlock? UserBlock { get; protected set; }
     public IList<string> AvailableProfileRoles { get; }
     
     public bool SelfView => ViewerUser?.Id == UserForView?.Id;
@@ -49,7 +48,6 @@ public class ProfilePage : PageModel
         if (profile == null) return NotFound();
         
         UserForView = profile;
-        UserBlock = await BlockingManager.GetUserBlockAsync(UserForView.Id);
 
         return Page();
     }

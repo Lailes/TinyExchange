@@ -27,7 +27,7 @@ public class AuthManager : IAuthManager
         if (user == null || user.PasswordHash != ComputeHash(loginData.Password))
             return new WrongLoginResult();
 
-        if (await _blockingManager.GetUserBlockAsync(user.Id) != null)
+        if (await _blockingManager.CheckIsUserBlockedAsync(user.Id) != null)
             return new BannedResult();
 
         var claims = new List<Claim> {
