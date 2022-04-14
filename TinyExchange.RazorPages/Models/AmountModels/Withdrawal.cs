@@ -30,10 +30,4 @@ public class Withdrawal
         };
 }
 
-[Flags]
-public enum WithdrawalState : byte
-{
-    Confirmed = 0b00000001, 
-    NotConfirmed = 0b00000010, 
-    InQueue = 0b00000100
-}
+public enum WithdrawalState : byte { Confirmed, NotConfirmed, InQueue }

@@ -15,8 +15,8 @@ public class Debit
     [Column("amount")] public decimal Amount { get; set; }
     [ForeignKey("card_id")] public CardInfo? Card { get; set; }
     [Column("date_time")] public DateTime DateTime { get; set; }
-    [Column("debit_type")] public DebitType DebitType { get; set; } = DebitType.ByUser;
-    [Column("debit_state")] public DebitState DebitState { get; set; } = DebitState.InQueue;
+    [Column("debit_type")] public DebitType DebitType { get; set; }
+    [Column("debit_state")] public DebitState DebitState { get; set; }
 
     public static Debit FromModel(DebitModel model, User user, CardInfo cardInfo) =>
         new()

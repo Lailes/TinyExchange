@@ -18,7 +18,7 @@ public class TransferApiController : Controller
         {
             DebitCancelResult.Ok => StatusCodes.Status200OK,
             DebitCancelResult.NotFound => StatusCodes.Status404NotFound,
-            DebitCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
+            DebitCancelResult.NotAllowed => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError
         };
 
@@ -29,7 +29,7 @@ public class TransferApiController : Controller
             {
                 WithdrawalCancelResult.Ok => StatusCodes.Status200OK,
                 WithdrawalCancelResult.NotFound => StatusCodes.Status404NotFound,
-                WithdrawalCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
+                WithdrawalCancelResult.NotAllowed => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
             };
 
@@ -41,7 +41,7 @@ public class TransferApiController : Controller
             {
                 ConfirmDebitResult.Ok => StatusCodes.Status200OK,
                 ConfirmDebitResult.NotFound => StatusCodes.Status404NotFound,
-                ConfirmDebitResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
+                ConfirmDebitResult.NotAllowed => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
             };
 
@@ -53,7 +53,7 @@ public class TransferApiController : Controller
             {
                 ConfirmWithdrawalResult.Ok => StatusCodes.Status200OK,
                 ConfirmWithdrawalResult.NotFound => StatusCodes.Status404NotFound,
-                ConfirmWithdrawalResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
+                ConfirmWithdrawalResult.NotAllowed => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
             };
 }
