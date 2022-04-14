@@ -34,7 +34,12 @@ public class User
     
     [ForeignKey("kyc_request_id")] 
     public KycUserRequest? KycRequest { get; set; }
-    
+
+    [ForeignKey("block_id")] 
+    public List<UserBlock> Blocks { get; set; } = new();
+
+    [NotMapped] public UserBlock? ActiveBlock => Blocks.FirstOrDefault(b => b.BlockState == BlockState.Blocked);
+
     public User RemoveSensitiveData()
     {
         PasswordHash = null;

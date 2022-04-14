@@ -64,12 +64,12 @@
 </div>
 
 <div>
-    @if (Model.UserBlock != null)
+    @if (Model.UserForView.ActiveBlock != null)
     {
         <div class="text-center">
             <h4 class="h4">User is Banned</h4>
-            <h6 class="h6">Reason: @Model.UserBlock.Reason</h6>
-            <h5 class="h5">Banned Until: @Model.UserBlock.ReleaseTime.ToString("f")</h5>
+            <h6 class="h6">Reason: @Model.UserForView.ActiveBlock.Reason</h6>
+            <h5 class="h5">Banned Until: @Model.UserForView.ActiveBlock.ReleaseTime.ToString("f")</h5>
         </div>
     }
     <div>
@@ -77,7 +77,7 @@
             <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#editModal">Edit Info</button>
         </div>
         <div>
-            @if (Model.UserBlock != null)
+            @if (Model.UserForView.ActiveBlock != null)
             {
                 <form method="post" asp-page-handler="UnblockUser" asp-page="../ProfilePages/AdminProfile">
                     <input type="hidden" name="userId" value="@Model.UserForView.Id"/>

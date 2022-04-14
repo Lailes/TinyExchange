@@ -6,7 +6,7 @@ public interface IBlockingManager
 {
     Task<BlockUserResult> BlockUserAsync(int userId, int adminId, DateTime releaseTime, string reason);
     Task<BlockUserResult> UnblockUserAsync(int userId, int? adminId = null);
-    Task<UserBlock?> GetUserBlockAsync(int userId);
+    Task<bool> CheckIsUserBlockedAsync(int userId);
 }
 
 public enum BlockUserResult : byte

@@ -24,5 +24,11 @@ public sealed class ApplicationContext : DbContext
         if (Users != null && !Users.Any()) 
             Seeder.SeedUsers(this);
     }
-    
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>()
+            .HasMany(_ => _.Blocks)
+            .WithOne(_ => _.User);
+    }
 }
