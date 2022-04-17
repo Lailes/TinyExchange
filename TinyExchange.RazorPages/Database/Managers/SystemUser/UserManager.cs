@@ -14,28 +14,22 @@ public class UserManager : IUserManager
     public UserManager(ApplicationContext context) =>
         _context = context;
 
-    public async Task<User?> FindUserByEmailOrDefaultAsync(string email, bool anonimize = true)
-    {
-        var user = await _context
+    public async Task<User?> FindUserByEmailOrDefaultAsync(string email) =>
+        await _context
             .Users
             .Include(u => u.KycRequest)
-            .FirstOrDefaultAsync(user => user.Email == email);
+            .Include(u => u.Blocks)
+            .FirstOrDefaultAsync(user1 => user1.Email == email);
 
-        return anonimize ? user?.RemoveSensitiveData() : user;
-    }
-    
-    public async Task<User?> FindUserByIdOrDefaultAsync(int id, bool anonimize = true)
-    {
-        var user = await _context
+    public async Task<User?> FindUserByIdOrDefaultAsync(int id) =>
+        await _context
             .Users
             .Include(u => u.KycRequest)
-            .FirstOrDefaultAsync(user => user.Id == id);
+            .Include(u => u.Blocks)
+            .FirstOrDefaultAsync(user1 => user1.Id == id);
 
-        return anonimize ? user?.RemoveSensitiveData() : user;
-    }
-    
-    public async Task<User> FindUserByIdAsync(int userId, bool anonimize = true) => 
-        await FindUserByIdOrDefaultAsync(userId, anonimize) ?? 
+    public async Task<User> FindUserByIdAsync(int userId) => 
+        await FindUserByIdOrDefaultAsync(userId) ?? 
         throw new UserNotFoundException($"User with ID = {userId} not found");
 
     public async Task AddUserAsync(User user)
@@ -46,7 +40,7 @@ public class UserManager : IUserManager
 
     public async Task<ModifyUserResult> ModifyUserAsync(UserEditInfoModel infoModel)
     {
-        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModel.Id, false);
+        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModel.Id);
         if (databaseEntity == null) 
             return ModifyUserResult.UserNotFound;
         
@@ -60,7 +54,7 @@ public class UserManager : IUserManager
 
     public async Task<ModifyUserResult> ModifyUserAsync(AdminEditInfoModelModel infoModelModel)
     {
-        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModelModel.Id, false);
+        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModelModel.Id);
         if (databaseEntity == null) 
             return ModifyUserResult.UserNotFound;
         
@@ -75,7 +69,7 @@ public class UserManager : IUserManager
 
     public async Task<ModifyUserResult> ModifyUserAsync(User user, KycUserRequest kycRequest)
     {
-        var databaseEntity = await FindUserByIdOrDefaultAsync(user.Id, false);
+        var databaseEntity = await FindUserByIdOrDefaultAsync(user.Id);
         if (databaseEntity == null) 
             return ModifyUserResult.UserNotFound;
 

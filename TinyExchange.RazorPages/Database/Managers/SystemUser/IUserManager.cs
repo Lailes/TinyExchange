@@ -6,9 +6,9 @@ namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
 
 public interface IUserManager
 {
-    Task<User?> FindUserByEmailOrDefaultAsync(string email, bool anonimize = true);
-    Task<User?> FindUserByIdOrDefaultAsync(int userId, bool anonimize = true);
-    Task<User> FindUserByIdAsync(int userId, bool anonimize = true);
+    Task<User?> FindUserByEmailOrDefaultAsync(string email);
+    Task<User?> FindUserByIdOrDefaultAsync(int userId);
+    Task<User> FindUserByIdAsync(int userId);
     Task AddUserAsync(User user);
     Task<ModifyUserResult> ModifyUserAsync(UserEditInfoModel infoModel);
     Task<ModifyUserResult> ModifyUserAsync(AdminEditInfoModelModel infoModelModel);

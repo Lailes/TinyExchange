@@ -23,7 +23,7 @@ public class AuthManager : IAuthManager
 
     public async Task<LoginResult> LoginAsync(LoginData loginData, HttpContext httpContext)
     {
-        var user = await _userManager.FindUserByEmailOrDefaultAsync(loginData.Email, false);
+        var user = await _userManager.FindUserByEmailOrDefaultAsync(loginData.Email);
         if (user == null || user.PasswordHash != ComputeHash(loginData.Password))
             return new WrongLoginResult();
 

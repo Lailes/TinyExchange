@@ -23,7 +23,7 @@ public class BlockingManager: IBlockingManager
             banRecord.BlockState = BlockState.BlockTimeIsExpired;
         else
         {
-            var releaser = await _userManager.FindUserByIdOrDefaultAsync(adminId.Value, false);
+            var releaser = await _userManager.FindUserByIdOrDefaultAsync(adminId.Value);
             banRecord.ReleaserAdmin = releaser;
             banRecord.BlockState = BlockState.UnblockedByAdmin;
         }
@@ -42,11 +42,11 @@ public class BlockingManager: IBlockingManager
             return BlockUserResult.AlreadyBlocked;
         }
 
-        var user = await _userManager.FindUserByIdOrDefaultAsync(userId, false);
+        var user = await _userManager.FindUserByIdOrDefaultAsync(userId);
         if (user == null)
             return BlockUserResult.UserNotFound;
 
-        var admin = await _userManager.FindUserByIdOrDefaultAsync(adminId, false);
+        var admin = await _userManager.FindUserByIdOrDefaultAsync(adminId);
         if (admin == null)
             return BlockUserResult.AdminNotFound;
 
@@ -67,10 +67,10 @@ public class BlockingManager: IBlockingManager
     {
         var block = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
 
-        if (block is not {BlockState: BlockState.Blocked})
+        if (block is not {BlockState: BlockState.BlockActive})
             return false;
 
-        if (block.BanTime >= DateTime.UtcNow)
+        if (block.ReleaseTime >= DateTime.UtcNow)
             return true;
 
         block.BlockState = BlockState.BlockTimeIsExpired;

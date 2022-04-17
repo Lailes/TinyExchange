@@ -41,7 +41,7 @@ public class AmountManager : IAmountManager
 
         debit.DateTime = DateTime.UtcNow;
         debit.Card = await UpdateCard(debit.Card);
-        debit.User = await _userManager.FindUserByIdAsync(debit.User.Id, false); // To replace anonimized User
+        debit.User = await _userManager.FindUserByIdAsync(debit.User.Id);
         _context.Debits.Add(debit);
         
         await _context.SaveChangesAsync();
@@ -78,7 +78,7 @@ public class AmountManager : IAmountManager
             return WithdrawalResult.FailNoAmount;
         
         withdrawal.DateTime = DateTime.UtcNow;
-        withdrawal.User = await _userManager.FindUserByIdAsync(withdrawal.User.Id, false);
+        withdrawal.User = await _userManager.FindUserByIdAsync(withdrawal.User.Id);
         _context.Withdrawals.Add(withdrawal);
         
         await _context.SaveChangesAsync();
@@ -217,7 +217,7 @@ public class AmountManager : IAmountManager
         _context.Debits.Add(new Debit
         {
             Amount = amount, 
-            User = await _userManager.FindUserByIdAsync(userId, anonimize: false),
+            User = await _userManager.FindUserByIdAsync(userId),
             DateTime = DateTime.UtcNow,
             DebitState = DebitState.Confirmed,
             DebitType = DebitType.ByFundsManager
