@@ -56,14 +56,14 @@
                                 @if (SystemRoles.IsTransferManager(Model.ViewerUser.Role))
                                 {
                                     <span class="justify-content-center text-center">
-                                        <button onclick="cancelTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/cancel')" class="btn btn-danger">Cancel Debit</button>
-                                        <button onclick="cancelTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/confirm')" class="btn btn-success">Confirm Debit</button>
+                                        <button onclick="fetchTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/cancel')" class="btn btn-danger">Cancel Debit</button>
+                                        <button onclick="fetchTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/confirm')" class="btn btn-success">Confirm Debit</button>
                                     </span>
                                 }
                                 else
                                 {
                                     <span class="justify-content-center text-center">
-                                        <button onclick="cancelTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/cancel')" class="btn btn-danger">Cancel Debit</button>
+                                        <button onclick="fetchTransfer(@debit.Id, @Model.ViewerUser.Id, 'api/debits/cancel')" class="btn btn-danger">Cancel Debit</button>
                                     </span>
                                 }
                             }

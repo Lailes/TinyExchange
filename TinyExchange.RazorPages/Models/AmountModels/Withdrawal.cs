@@ -24,8 +24,8 @@ public class Withdrawal
             Id = model.Id,
             Amount = model.Amount,
             CardNumber = model.CardNumber,
-            DateTime = model.DateTime,
-            WithdrawalState = model.WithdrawalState,
+            DateTime = DateTime.UtcNow,
+            WithdrawalState = WithdrawalState.InQueue,
             User = user
         };
 }

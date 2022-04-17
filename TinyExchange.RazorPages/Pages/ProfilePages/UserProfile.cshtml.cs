@@ -35,8 +35,6 @@ public class UserProfile : ProfilePage
         var validResultCardInfo = !TryValidateModel(cardInfoModel);
         if (validResultDebit || validResultCardInfo)
             return await OnGetSelfProfileWithMessage("Form is filled with incorrect data");
-
-        
         
         var debit = Debit.FromModel(
             debitModel,

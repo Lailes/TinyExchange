@@ -54,8 +54,8 @@
                         {
                             <td>
                                 <span class="justify-content-center text-center">
-                                    <button onclick="cancelTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/cancel')" class="btn btn-danger">Cancel Withdrawal</button>
-                                    <button onclick="cancelTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/confirm')" class="btn btn-success">Confirm Withdrawal</button>
+                                    <button onclick="fetchTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/cancel')" class="btn btn-danger">Cancel Withdrawal</button>
+                                    <button onclick="fetchTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/confirm')" class="btn btn-success">Confirm Withdrawal</button>
                                 </span>
                             </td>
                         }
@@ -63,7 +63,7 @@
                         {
                             <td>
                                 <span class="justify-content-center text-center">
-                                    <button onclick="cancelTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/cancel')" class="btn btn-danger">Cancel Withdrawal</button>
+                                    <button onclick="fetchTransfer(@withdrawal.Id, @Model.ViewerUser.Id, 'api/withdrawals/cancel')" class="btn btn-danger">Cancel Withdrawal</button>
                                 </span>    
                             </td>
                         }

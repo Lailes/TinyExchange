@@ -35,4 +35,4 @@ public class UserBlock
     public DateTime ReleaseTime { get; set; }
 }
 
-public enum BlockState : byte { Blocked, UnblockedByAdmin, BlockTimeIsExpired }
+public enum BlockState : byte { BlockActive, UnblockedByAdmin, BlockTimeIsExpired }
