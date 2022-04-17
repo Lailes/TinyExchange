@@ -17,6 +17,7 @@ public static class Seeder
             Email = "admin", PasswordHash = AuthManager.ComputeHash("1"),
             RegisteredAt = DateTime.UtcNow,
             Role = SystemRoles.Admin,
+            Amount = 0,
             KycRequest = new KycUserRequest
             {
                 Address = "Some Where",
@@ -35,6 +36,7 @@ public static class Seeder
             Email = "user", PasswordHash = AuthManager.ComputeHash("1"),
             RegisteredAt = DateTime.UtcNow,
             Role = SystemRoles.User,
+            Amount = 0,
             KycRequest = new KycUserRequest
             {
                 Address = "Some Where",
@@ -53,6 +55,7 @@ public static class Seeder
             Email = "funds", PasswordHash = AuthManager.ComputeHash("1"),
             RegisteredAt = DateTime.UtcNow,
             Role = SystemRoles.FundsManager,
+            Amount = 0,
             KycRequest = new KycUserRequest
             {
                 Address = "Some Where",
@@ -71,6 +74,7 @@ public static class Seeder
             Email = "kyc", PasswordHash = AuthManager.ComputeHash("1"),
             RegisteredAt = DateTime.UtcNow,
             Role = SystemRoles.KycManager,
+            Amount = 0,
             KycRequest = new KycUserRequest
             {
                 Address = "Some Where",

@@ -35,6 +35,9 @@ public class User
     [ForeignKey("kyc_request_id")] 
     public KycUserRequest? KycRequest { get; set; }
 
+    [Column("amount")] 
+    public decimal Amount { get; set; } = 0;
+
     [ForeignKey("block_id")] 
     public List<UserBlock> Blocks { get; set; } = new();
 

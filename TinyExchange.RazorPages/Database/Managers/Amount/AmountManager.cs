@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.AuthModels;
+using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Database.Managers.Amount;
 
@@ -33,6 +34,8 @@ public class AmountManager : IAmountManager
 
     public async Task<DebitResult> CreateDebitAsync(Debit debit)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        
         if (await _blockingManager.CheckIsUserBlockedAsync(debit.User.Id))
             return DebitResult.Banned;
 
@@ -40,7 +43,10 @@ public class AmountManager : IAmountManager
         debit.Card = await UpdateCard(debit.Card);
         debit.User = await _userManager.FindUserByIdAsync(debit.User.Id, false); // To replace anonimized User
         _context.Debits.Add(debit);
+        
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        
         return DebitResult.Ok;
     }
 
@@ -64,6 +70,8 @@ public class AmountManager : IAmountManager
     {
         if (await _blockingManager.CheckIsUserBlockedAsync(withdrawal.User.Id))
             return WithdrawalResult.Banned;
+
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         
         var userAmountInfo = await GetAmountInfoForUser(withdrawal.User.Id);
         if (userAmountInfo.Amount < withdrawal.Amount)
@@ -72,17 +80,21 @@ public class AmountManager : IAmountManager
         withdrawal.DateTime = DateTime.UtcNow;
         withdrawal.User = await _userManager.FindUserByIdAsync(withdrawal.User.Id, false);
         _context.Withdrawals.Add(withdrawal);
+        
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        
         return WithdrawalResult.Ok;
     }
 
     public async Task<AmountInfo> GetAmountInfoForUser(int userId)
     {
         var debits = await QueryDebitsForUser(userId).ToListAsync();
-        var withdrawls = await QueryWithdrawalsForUser(userId).ToListAsync();
-
+        var withdrawals = await QueryWithdrawalsForUser(userId).ToListAsync();
+        var user = await _userManager.FindUserByIdAsync(userId);
+        
         return new AmountInfo(
-            amount: debits.Where(d => d.DebitState == DebitState.Confirmed).Sum(d => d.Amount) - withdrawls.Where(w => w.WithdrawalState == WithdrawalState.Confirmed).Sum(w => w.Amount),
+            amount: user.Amount,
             debitsCount: new Dictionary<DebitState, int>
             {
                 {DebitState.Confirmed, debits.Count(d => d.DebitState == DebitState.Confirmed)},
@@ -91,9 +103,9 @@ public class AmountManager : IAmountManager
             },
             withdrawalsCount: new Dictionary<WithdrawalState, int>
             {
-                {WithdrawalState.Confirmed, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.Confirmed)},
-                {WithdrawalState.NotConfirmed, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.NotConfirmed)},
-                {WithdrawalState.InQueue, withdrawls.Count(w => w.WithdrawalState == WithdrawalState.InQueue)}
+                {WithdrawalState.Confirmed, withdrawals.Count(w => w.WithdrawalState == WithdrawalState.Confirmed)},
+                {WithdrawalState.NotConfirmed, withdrawals.Count(w => w.WithdrawalState == WithdrawalState.NotConfirmed)},
+                {WithdrawalState.InQueue, withdrawals.Count(w => w.WithdrawalState == WithdrawalState.InQueue)}
             }
         );
     }
@@ -130,29 +142,39 @@ public class AmountManager : IAmountManager
 
     public async Task<ConfirmDebitResult> ConfirmDebitAsync(int transferId, int confirmerId)
     {
-        var confirmer = await _userManager.FindUserByIdAsync(confirmerId);
-        if (!SystemRoles.IsTransferManager(confirmer.Role))
+        if (!SystemRoles.IsTransferManager((await _userManager.FindUserByIdAsync(confirmerId)).Role))
             return ConfirmDebitResult.NotAllowed;
+
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         
         var debit = await FindDebitByIdOrDefaultAsync(transferId);
         if (debit == null) return ConfirmDebitResult.NotFound;
         
         debit.DebitState = DebitState.Confirmed;
+        debit.User.Amount += debit.Amount;
+        
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        
         return ConfirmDebitResult.Ok;
     }
 
     public async Task<ConfirmWithdrawalResult> ConfirmWithdrawalAsync(int transferId, int confirmerId)
     {
-        var confirmer = await _userManager.FindUserByIdAsync(confirmerId);
-        if (!SystemRoles.IsTransferManager(confirmer.Role))
+        if (!SystemRoles.IsTransferManager((await _userManager.FindUserByIdAsync(confirmerId)).Role))
             return ConfirmWithdrawalResult.NotAllowed;
 
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        
         var withdrawal = await FindWithdrawalByIdOrDefaultAsync(transferId);
         if (withdrawal == null) return ConfirmWithdrawalResult.NotFound;
 
         withdrawal.WithdrawalState = WithdrawalState.Confirmed;
+        withdrawal.User.Amount -= withdrawal.Amount;
+        
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        
         return ConfirmWithdrawalResult.Ok;
     }
 
