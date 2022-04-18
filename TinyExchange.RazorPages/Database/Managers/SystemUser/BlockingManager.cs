@@ -13,20 +13,14 @@ public class BlockingManager: IBlockingManager
         _userManager = userManager;
     }
     
-    public async Task<BlockUserResult> UnblockUserAsync(int userId, int? adminId = null)
+    public async Task<BlockUserResult> UnblockUserAsync(int userId, int adminId)
     {
         var banRecord = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
         if (banRecord == null)
             return BlockUserResult.UserNotBlocked;
 
-        if (adminId == null)
-            banRecord.BlockState = BlockState.BlockTimeIsExpired;
-        else
-        {
-            var releaser = await _userManager.FindUserByIdOrDefaultAsync(adminId.Value);
-            banRecord.ReleaserAdmin = releaser;
-            banRecord.BlockState = BlockState.UnblockedByAdmin;
-        }
+        banRecord.ReleaserAdmin = await _userManager.FindUserByIdOrDefaultAsync(adminId); 
+        banRecord.BlockState = BlockState.UnblockedByAdmin;
 
         await _context.SaveChangesAsync();
         return BlockUserResult.Unblocked;
