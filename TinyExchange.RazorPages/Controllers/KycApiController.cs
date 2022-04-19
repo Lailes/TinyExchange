@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
+using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.AuthModels;
 
 namespace TinyExchange.RazorPages.Controllers;
@@ -20,7 +21,7 @@ public class KycApiController : Controller
         {
             ChangeKycStateResult.Ok => StatusCodes.Status200OK,
             ChangeKycStateResult.NotFound => StatusCodes.Status400BadRequest,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Confirm KYC State", StatusCodes.Status500InternalServerError)
         };
 
     [HttpPost("cancel/{requestId}")]
@@ -29,6 +30,6 @@ public class KycApiController : Controller
         {
             ChangeKycStateResult.Ok => StatusCodes.Status200OK,
             ChangeKycStateResult.NotFound => StatusCodes.Status400BadRequest,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Reject KYC State", StatusCodes.Status500InternalServerError)
         };
 }

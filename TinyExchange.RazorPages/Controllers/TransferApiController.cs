@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
-using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.AmountModels.DTO;
+using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.AuthModels;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -20,7 +20,7 @@ public class TransferApiController : Controller
             DebitCancelResult.Ok => StatusCodes.Status200OK,
             DebitCancelResult.NotFound => StatusCodes.Status404NotFound,
             DebitCancelResult.NotAllowed => StatusCodes.Status409Conflict,
-            _ => StatusCodes.Status500InternalServerError
+            _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Cancel Debit State", StatusCodes.Status500InternalServerError)
         };
 
     [HttpPost("withdrawals/cancel")]
@@ -31,7 +31,7 @@ public class TransferApiController : Controller
                 WithdrawalCancelResult.Ok => StatusCodes.Status200OK,
                 WithdrawalCancelResult.NotFound => StatusCodes.Status404NotFound,
                 WithdrawalCancelResult.NotAllowed => StatusCodes.Status409Conflict,
-                _ => StatusCodes.Status500InternalServerError
+                _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Cancel Withdrawal State", StatusCodes.Status500InternalServerError)
             };
 
     [HttpPost("debits/confirm")]
@@ -43,18 +43,19 @@ public class TransferApiController : Controller
                 ConfirmDebitResult.Ok => StatusCodes.Status200OK,
                 ConfirmDebitResult.NotFound => StatusCodes.Status404NotFound,
                 ConfirmDebitResult.NotAllowed => StatusCodes.Status409Conflict,
-                _ => StatusCodes.Status500InternalServerError
+                _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Confirm Debit State", StatusCodes.Status500InternalServerError)
             };
 
 
     [HttpPost("withdrawals/confirm")]
     [Authorize(Roles = SystemRoles.FundsManager, Policy = KycClaimSettings.PolicyName)]
-    public async Task ConfirmWithdrawal([FromServices] IAmountManager amountManager, [FromBody] StatusChangeModel statusChangeModel) =>
+    public async Task ConfirmWithdrawal([FromServices] IAmountManager amountManager, [FromBody] StatusChangeModel statusChangeModel) {
         Response.StatusCode = await amountManager.ConfirmWithdrawalAsync(statusChangeModel.TransferId, statusChangeModel.UserId) switch
             {
                 ConfirmWithdrawalResult.Ok => StatusCodes.Status200OK,
                 ConfirmWithdrawalResult.NotFound => StatusCodes.Status404NotFound,
                 ConfirmWithdrawalResult.NotAllowed => StatusCodes.Status409Conflict,
-                _ => StatusCodes.Status500InternalServerError
+                _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Confirm Withdrawal State", StatusCodes.Status500InternalServerError)
             };
+        }
 }
