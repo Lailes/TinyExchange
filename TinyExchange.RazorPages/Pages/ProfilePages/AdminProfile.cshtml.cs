@@ -4,7 +4,6 @@ using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
-using TinyExchange.RazorPages.Models.UserModels;
 using TinyExchange.RazorPages.Models.UserModels.DTO;
 
 namespace TinyExchange.RazorPages.Pages.ProfilePages;
@@ -17,14 +16,14 @@ public class AdminProfile : ProfilePage
     
     public async Task OnPostBlockUser(string reason, DateTime releaseTime, int userId, int adminId)
     {
-        await BlockingManager.BlockUserAsync(userId, adminId, releaseTime, reason);
+        await BlockingManager.BlockUserAsync(userId, releaseTime, reason);
         ViewerUser = await UserManager.FindUserByIdAsync(adminId);
         UserForView = await UserManager.FindUserByIdAsync(userId);
     }
 
     public async Task OnPostUnBlockUser(int userId, int adminId)
     {
-        await BlockingManager.UnblockUserAsync(userId, adminId);
+        await BlockingManager.UnblockUserAsync(userId);
         ViewerUser = await UserManager.FindUserByIdAsync(adminId);
         UserForView = await UserManager.FindUserByIdAsync(userId);
     }

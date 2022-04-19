@@ -13,20 +13,19 @@ public class BlockingManager: IBlockingManager
         _userManager = userManager;
     }
     
-    public async Task<BlockUserResult> UnblockUserAsync(int userId, int adminId)
+    public async Task<BlockUserResult> UnblockUserAsync(int userId)
     {
         var banRecord = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
         if (banRecord == null)
             return BlockUserResult.UserNotBlocked;
 
-        banRecord.ReleaserAdmin = await _userManager.FindUserByIdOrDefaultAsync(adminId); 
-        banRecord.BlockState = BlockState.UnblockedByAdmin;
-
+        banRecord.ReleaseTime = DateTime.UtcNow;
+        
         await _context.SaveChangesAsync();
         return BlockUserResult.Unblocked;
     }
     
-    public async Task<BlockUserResult> BlockUserAsync(int userId, int adminId, DateTime releaseTime, string reason = "")
+    public async Task<BlockUserResult> BlockUserAsync(int userId, DateTime releaseTime, string reason = "")
     {
         var ban = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
         if (ban != null)
@@ -40,14 +39,9 @@ public class BlockingManager: IBlockingManager
         if (user == null)
             return BlockUserResult.UserNotFound;
 
-        var admin = await _userManager.FindUserByIdOrDefaultAsync(adminId);
-        if (admin == null)
-            return BlockUserResult.AdminNotFound;
-
         user.Blocks.Add(new UserBlock
         {
             Reason = reason,
-            IssuerAdmin = admin,
             BanTime = DateTime.UtcNow,
             ReleaseTime = releaseTime
         });
@@ -61,14 +55,9 @@ public class BlockingManager: IBlockingManager
     {
         var block = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
 
-        if (block is not {BlockState: BlockState.BlockActive})
+        if (block is null)
             return false;
 
-        if (block.ReleaseTime >= DateTime.UtcNow)
-            return true;
-
-        block.BlockState = BlockState.BlockTimeIsExpired;
-        await _context.SaveChangesAsync();
-        return false;
+        return block.ReleaseTime >= DateTime.UtcNow;
     }
 }

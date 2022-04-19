@@ -4,8 +4,8 @@ namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
 
 public interface IBlockingManager
 {
-    Task<BlockUserResult> BlockUserAsync(int userId, int adminId, DateTime releaseTime, string reason);
-    Task<BlockUserResult> UnblockUserAsync(int userId, int adminId);
+    Task<BlockUserResult> BlockUserAsync(int userId, DateTime releaseTime, string reason);
+    Task<BlockUserResult> UnblockUserAsync(int userId);
     Task<bool> CheckIsUserBlockedAsync(int userId);
 }
 

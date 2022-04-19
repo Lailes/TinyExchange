@@ -41,7 +41,7 @@ public class User
     [ForeignKey("block_id")] 
     public List<UserBlock> Blocks { get; set; } = new();
 
-    [NotMapped] public UserBlock? ActiveBlock => Blocks.FirstOrDefault(b => b.BlockState == BlockState.BlockActive);
+    [NotMapped] public UserBlock? ActiveBlock => Blocks.FirstOrDefault(b => b.IsActive(DateTime.UtcNow));
 
     public User RemoveSensitiveData()
     {
