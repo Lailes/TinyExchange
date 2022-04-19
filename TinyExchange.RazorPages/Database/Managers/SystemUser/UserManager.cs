@@ -9,9 +9,9 @@ namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
 
 public class UserManager : IUserManager
 {
-    private readonly ApplicationContext _context;
+    private readonly IApplicationContext _context;
 
-    public UserManager(ApplicationContext context) =>
+    public UserManager(IApplicationContext context) =>
         _context = context;
 
     public async Task<User?> FindUserByEmailOrDefaultAsync(string email) =>
@@ -35,7 +35,7 @@ public class UserManager : IUserManager
     public async Task AddUserAsync(User user)
     {
         await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveAsync();
     }
 
     public async Task<ModifyUserResult> ModifyUserAsync(UserEditInfoModel infoModel)
@@ -48,7 +48,7 @@ public class UserManager : IUserManager
         databaseEntity.FirstName = infoModel.FirstName;
         databaseEntity.LastName = infoModel.LastName;
         
-        await _context.SaveChangesAsync();
+        await _context.SaveAsync();
         return ModifyUserResult.Changed;
     }
 
@@ -63,7 +63,7 @@ public class UserManager : IUserManager
         databaseEntity.LastName = infoModelModel.LastName;
         databaseEntity.Role = infoModelModel.Role;
         
-        await _context.SaveChangesAsync();
+        await _context.SaveAsync();
         return ModifyUserResult.Changed;
     }
 
@@ -75,7 +75,7 @@ public class UserManager : IUserManager
 
         user.KycRequest = kycRequest;
         
-        await _context.SaveChangesAsync();
+        await _context.SaveAsync();
         return ModifyUserResult.Changed;
     }
 

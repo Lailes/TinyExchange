@@ -5,9 +5,9 @@ namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
 public class BlockingManager: IBlockingManager
 {
     private readonly IUserManager _userManager;
-    private readonly ApplicationContext _context;
+    private readonly IApplicationContext _context;
 
-    public BlockingManager(ApplicationContext context, IUserManager userManager)
+    public BlockingManager(IApplicationContext context, IUserManager userManager)
     {
         _context = context;
         _userManager = userManager;
@@ -21,7 +21,7 @@ public class BlockingManager: IBlockingManager
 
         banRecord.ReleaseTime = DateTime.UtcNow;
         
-        await _context.SaveChangesAsync();
+        await _context.SaveAsync();
         return BlockUserResult.Unblocked;
     }
     
@@ -31,7 +31,7 @@ public class BlockingManager: IBlockingManager
         if (ban != null)
         {
             ban.ReleaseTime = releaseTime;
-            await _context.SaveChangesAsync();
+            await _context.SaveAsync();
             return BlockUserResult.AlreadyBlocked;
         }
 
@@ -46,7 +46,7 @@ public class BlockingManager: IBlockingManager
             ReleaseTime = releaseTime
         });
         
-        await _context.SaveChangesAsync();
+        await _context.SaveAsync();
         return BlockUserResult.Blocked;
     }
     

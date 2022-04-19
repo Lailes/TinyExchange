@@ -6,7 +6,7 @@ namespace TinyExchange.RazorPages.Database;
 
 public static class Seeder
 {
-    public static void SeedUsers(ApplicationContext? context)
+    public static void SeedUsers(IApplicationContext? context)
     {
         if (context == null)
             throw new ArgumentNullException(nameof(context));
@@ -27,8 +27,8 @@ public static class Seeder
                 PassportNumber = "123456789"
             }
         };
-        context.Add(userAdmin);
-        context.SaveChanges();
+        context.Users.Add(userAdmin);
+        context.SaveAsync().Wait();
 
         var userUser = new User
         {
@@ -46,8 +46,8 @@ public static class Seeder
                 PassportNumber = "1234"
             }
         };
-        context.Add(userUser);
-        context.SaveChanges();
+        context.Users.Add(userUser);
+        context.SaveAsync().Wait();
 
         var userFunds = new User
         {
@@ -65,8 +65,8 @@ public static class Seeder
                 PassportNumber = "123456"
             }
         };
-        context.Add(userFunds);
-        context.SaveChanges();
+        context.Users.Add(userFunds);
+        context.SaveAsync().Wait();
 
         var userKyc = new User
         {
@@ -84,8 +84,7 @@ public static class Seeder
                 PassportNumber = "123453126"
             }
         };
-        context.Add(userKyc);
-        context.SaveChanges();
-        
+        context.Users.Add(userKyc);
+        context.SaveAsync().Wait();
     }
 }
