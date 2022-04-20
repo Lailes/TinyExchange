@@ -3,12 +3,8 @@ using System.Net.Http;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Configuration;
 using TinyExchange.RazorPages;
-using TinyExchange.RazorPages.Database;
-using TinyExchange.Tests.Environment.Moqs;
 
 namespace TinyExchange.Tests.Environment;
 
@@ -17,22 +13,17 @@ public class WebAppTestHost
     private TestServer _testServer;
     public IServiceProvider Services => _testServer.Host.Services;
 
-    public void Start()
-    {
-        var builder = WebHost.CreateDefaultBuilder();
-        builder.UseStartup<Startup>();
+    public void Start() =>
+        _testServer = new TestServer(WebHost
+            .CreateDefaultBuilder()
+            .ConfigureAppConfiguration((_, configurationBuilder) =>
+            {
+                configurationBuilder.AddCommandLine(
+                    new [] { "--port", "5432", "--host", "127.0.0.1", "--db", "tiny_exchange_db", "--username", "nikita", "--password", "nikita2209" });
+            })
+            .UseStartup<Startup>());
 
-        builder.ConfigureServices(services =>
-            services.Replace(
-                new ServiceDescriptor(
-                    typeof(IApplicationContext), 
-                    _ => new MoqContext(new DbContextOptionsBuilder<MoqContext>().UseInMemoryDatabase("TEST_DB").Options), 
-                    ServiceLifetime.Transient)));
-        
-        _testServer = new TestServer(builder);
-    }
-
-    public HttpClient GetClient() => _testServer.CreateClient();
+    public HttpClient Client => _testServer.CreateClient();
 
     public void Dispose() => _testServer?.Dispose();
 }
