@@ -10,7 +10,7 @@ using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Database;
 
-public sealed class ApplicationContext : DbContext, IApplicationContext
+public sealed class ApplicationContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<UserBlock> Blocks { get; set; }
@@ -19,9 +19,6 @@ public sealed class ApplicationContext : DbContext, IApplicationContext
     public DbSet<CardInfo> CardInfos { get; set; }
     public DbSet<KycUserRequest> KycUserRequests { get; set; }
     
-    public Task SaveAsync() => base.SaveChangesAsync();
-    public Task<IDbContextTransaction> BeginTransactionAsync() => Database.BeginTransactionAsync();
-
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
     {
         Database.EnsureCreated();

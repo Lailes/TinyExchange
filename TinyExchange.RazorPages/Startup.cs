@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using TinyExchange.RazorPages.Controllers;
+using TinyExchange.RazorPages.Database;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;

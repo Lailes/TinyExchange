@@ -8,9 +8,9 @@ namespace TinyExchange.RazorPages.Database.Managers.Auth;
 public class KycManager : IKycManager
 {
     private readonly IUserManager _userManager;
-    private readonly IApplicationContext _context;
+    private readonly ApplicationContext _context;
 
-    public KycManager(IUserManager userManager, IApplicationContext context)
+    public KycManager(IUserManager userManager, ApplicationContext context)
     {
         _userManager = userManager;
         _context = context;
@@ -35,7 +35,7 @@ public class KycManager : IKycManager
             return ChangeKycStateResult.NotFound;
         
         request.KycState = kycState;
-        await _context.SaveAsync();
+        await _context.SaveChangesAsync();
         return ChangeKycStateResult.Ok;
     }
 }

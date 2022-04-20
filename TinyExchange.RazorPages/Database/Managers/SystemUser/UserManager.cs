@@ -9,9 +9,9 @@ namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
 
 public class UserManager : IUserManager
 {
-    private readonly IApplicationContext _context;
+    private readonly ApplicationContext _context;
 
-    public UserManager(IApplicationContext context) =>
+    public UserManager(ApplicationContext context) =>
         _context = context;
 
     public async Task<User?> FindUserByEmailOrDefaultAsync(string email) =>
@@ -19,7 +19,7 @@ public class UserManager : IUserManager
             .Users
             .Include(u => u.KycRequest)
             .Include(u => u.Blocks)
-            .FirstOrDefaultAsync(user1 => user1.Email == email);
+            .FirstOrDefaultAsync(user => user.Email == email);
 
     public async Task<User?> FindUserByIdOrDefaultAsync(int id) =>
         await _context
@@ -35,7 +35,7 @@ public class UserManager : IUserManager
     public async Task AddUserAsync(User user)
     {
         await _context.Users.AddAsync(user);
-        await _context.SaveAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<ModifyUserResult> ModifyUserAsync(UserEditInfoModel infoModel)
@@ -48,7 +48,7 @@ public class UserManager : IUserManager
         databaseEntity.FirstName = infoModel.FirstName;
         databaseEntity.LastName = infoModel.LastName;
         
-        await _context.SaveAsync();
+        await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;
     }
 
@@ -63,7 +63,7 @@ public class UserManager : IUserManager
         databaseEntity.LastName = infoModelModel.LastName;
         databaseEntity.Role = infoModelModel.Role;
         
-        await _context.SaveAsync();
+        await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;
     }
 
@@ -75,7 +75,7 @@ public class UserManager : IUserManager
 
         user.KycRequest = kycRequest;
         
-        await _context.SaveAsync();
+        await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;
     }
 
