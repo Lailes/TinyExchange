@@ -11,13 +11,20 @@
     
 }
 
-<form method="post" >
+<form method="post">
     <div class="container">
+        <label><b>First Name</b></label>
         <input type="text" placeholder="Enter FirstName" name="firstName" required>
+        <label><b>Last Name</b></label>
         <input type="text" placeholder="Enter LastName" name="lastName" required>
+        <label><b>E-Mail</b></label>
         <input type="text" placeholder="Enter Email" name="email" required>
+        <label><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="password" required>
         <button type="submit">Sign Up</button>
+        <div class="justify-content-center text-center">
+            <a asp-page="Login" class="btn btn-secondary">Log-In</a>
+        </div>
     </div>
 </form>
 

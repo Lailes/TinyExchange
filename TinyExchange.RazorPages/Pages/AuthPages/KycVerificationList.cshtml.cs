@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
@@ -26,7 +27,7 @@ public class KycVerificationList : PageModel
     
     public async Task OnGet()
     {
-        UserWithKycRequests = await _kycManager.ListUsersWithRequests(kycStates: new [] { KycState.InQueue });
-        ViewerUser = await _userManager.FindUserByIdAsync(User.GetUserIdFromClaims());
+        UserWithKycRequests = await _kycManager.QueryUsersWithRequests(kycStates: new [] { KycState.InQueue }).ToListAsync();
+        ViewerUser = await _userManager.FindUserByIdAsync(User.GetUserId());
     }
 }

@@ -23,11 +23,11 @@ public class AuthManager : IAuthManager
 
     public async Task<LoginResult> LoginAsync(LoginData loginData, HttpContext httpContext)
     {
-        var user = await _userManager.FindUserByEmailOrDefaultAsync(loginData.Email, false);
+        var user = await _userManager.FindUserByEmailOrDefaultAsync(loginData.Email);
         if (user == null || user.PasswordHash != ComputeHash(loginData.Password))
             return new WrongLoginResult();
 
-        if (await _blockingManager.GetUserBlockAsync(user.Id) != null)
+        if (await _blockingManager.CheckIsUserBlockedAsync(user.Id))
             return new BannedResult();
 
         var claims = new List<Claim> {
@@ -73,7 +73,7 @@ public class AuthManager : IAuthManager
         };
         await _userManager.AddUserAsync(user);
 
-        await LoginAsync(new LoginData(signUpData.Email, signUpData.Password), httpContext);
+        await LoginAsync(new LoginData { Email = signUpData.Email, Password = signUpData.Password }, httpContext);
         return new OkSignUpResult(user);
     }
 
@@ -84,7 +84,7 @@ public class AuthManager : IAuthManager
 
     public IList<string> GetAvailableSystemRoles() => SystemRoles.AllRoles;
 
-    private static string ComputeHash(string line)
+    public static string ComputeHash(string line)
     {
         using var md5 = MD5.Create();
         var hash = md5.ComputeHash(Encoding.Default.GetBytes(line));

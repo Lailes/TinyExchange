@@ -7,7 +7,15 @@
 <link rel="stylesheet" asp-href-include="/css/profile.css"/>
 <link rel="stylesheet" asp-href-include="/css/modal.css"/>
 
-@{ var amountInfo = await Model.GetAmountInfo(); }
+@{
+    var amountInfo = await Model.GetAmountInfo();
+    
+    if (Model.ViewerUser == null)
+        throw new ArgumentNullException(nameof(Model.ViewerUser));
+    
+    if (Model.UserForView == null)
+        throw new ArgumentNullException(nameof(Model.UserForView));
+}
 
 <div class="modal fade" id="debitModal" tabindex="-1" aria-labelledby="debitModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered small-padding">
@@ -68,7 +76,6 @@
                 <input class="form-control form-text" type="text" name="firstName" value="@Model.UserForView.FirstName"/>
                 <input class="form-control form-text" type="text" name="lastName" value="@Model.UserForView.LastName"/>
                 <input class="form-control form-text" type="text" name="email" value="@Model.UserForView.Email"/>
-                <input class="form-control form-text" type="text" name="role" value="@Model.UserForView.Role"/>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Apply Changes</button>

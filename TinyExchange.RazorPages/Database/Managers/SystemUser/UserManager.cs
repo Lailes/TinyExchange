@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Infrastructure.Exceptions;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
+using TinyExchange.RazorPages.Models.UserModels.DTO;
+using TinyExchange.RazorPages.Pages.AuthPages;
 
 namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
 
@@ -12,22 +14,22 @@ public class UserManager : IUserManager
     public UserManager(ApplicationContext context) =>
         _context = context;
 
-    public async Task<User?> FindUserByEmailOrDefaultAsync(string email, bool anonimize = true) =>
-        anonimize
-            ? (await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Email == email))?.RemoveSensitiveData()
-            : await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Email == email);
+    public async Task<User?> FindUserByEmailOrDefaultAsync(string email) =>
+        await _context
+            .Users
+            .Include(u => u.KycRequest)
+            .Include(u => u.Blocks)
+            .FirstOrDefaultAsync(user1 => user1.Email == email);
 
-    public async Task<User?> FindUserByIdOrDefaultAsync(int id, bool anonimize = true) =>
-        anonimize
-            ? (await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Id == id))?.RemoveSensitiveData()
-            : await _context.Users.Include(u => u.KycRequest).FirstOrDefaultAsync(user => user.Id == id);
+    public async Task<User?> FindUserByIdOrDefaultAsync(int id) =>
+        await _context
+            .Users
+            .Include(u => u.KycRequest)
+            .Include(u => u.Blocks)
+            .FirstOrDefaultAsync(user1 => user1.Id == id);
 
-    public async Task<User> FindUserByEmailAsync(string email, bool anonimize = true) =>
-        await FindUserByEmailOrDefaultAsync(email, anonimize) ??
-        throw new UserNotFoundException($"User with email = \"{email}\" not found");
-
-    public async Task<User> FindUserByIdAsync(int userId, bool anonimize = true) => 
-        await FindUserByIdOrDefaultAsync(userId, anonimize) ?? 
+    public async Task<User> FindUserByIdAsync(int userId) => 
+        await FindUserByIdOrDefaultAsync(userId) ?? 
         throw new UserNotFoundException($"User with ID = {userId} not found");
 
     public async Task AddUserAsync(User user)
@@ -36,44 +38,55 @@ public class UserManager : IUserManager
         await _context.SaveChangesAsync();
     }
 
-    public async Task<ModifyUserResult> ModifyUserAsync(User user)
+    public async Task<ModifyUserResult> ModifyUserAsync(UserEditInfoModel infoModel)
     {
-        var databaseEntity = await FindUserByIdOrDefaultAsync(user.Id, false);
+        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModel.Id);
         if (databaseEntity == null) 
             return ModifyUserResult.UserNotFound;
         
-        databaseEntity.Email = user.Email;
-        databaseEntity.FirstName = user.FirstName;
-        databaseEntity.LastName = user.LastName;
-        databaseEntity.Role = user.Role;
-        databaseEntity.KycRequest ??= user.KycRequest;
+        databaseEntity.Email = infoModel.Email;
+        databaseEntity.FirstName = infoModel.FirstName;
+        databaseEntity.LastName = infoModel.LastName;
+        
         await _context.SaveChangesAsync();
         return ModifyUserResult.Changed;
     }
 
-    public async Task<AssignRoleResult> AssignRole(int userId, string role)
+    public async Task<ModifyUserResult> ModifyUserAsync(AdminEditInfoModelModel infoModelModel)
     {
-        var user = await FindUserByIdOrDefaultAsync(userId);
-        if (user == null) 
-            return AssignRoleResult.UserNotFound;
-
-        if (SystemRoles.IsAdmin(user.Role))
-            return AssignRoleResult.AdminChangeFail;
+        var databaseEntity = await FindUserByIdOrDefaultAsync(infoModelModel.Id);
+        if (databaseEntity == null) 
+            return ModifyUserResult.UserNotFound;
         
-        user.Role = role;
+        databaseEntity.Email = infoModelModel.Email;
+        databaseEntity.FirstName = infoModelModel.FirstName;
+        databaseEntity.LastName = infoModelModel.LastName;
+        databaseEntity.Role = infoModelModel.Role;
+        
         await _context.SaveChangesAsync();
-        return AssignRoleResult.Ok;
+        return ModifyUserResult.Changed;
     }
 
-    public async Task<IEnumerable<User>> ListUsersAsync(int count, int skipCount, string[] systemRoles) =>
-        (await _context
+    public async Task<ModifyUserResult> ModifyUserAsync(User user, KycUserRequest kycRequest)
+    {
+        var databaseEntity = await FindUserByIdOrDefaultAsync(user.Id);
+        if (databaseEntity == null) 
+            return ModifyUserResult.UserNotFound;
+
+        user.KycRequest = kycRequest;
+        
+        await _context.SaveChangesAsync();
+        return ModifyUserResult.Changed;
+    }
+
+    public IQueryable<User> QueryUsersAsync(int count, int skipCount, string[] systemRoles) =>
+        _context
             .Users
             .OrderBy(user => user.Id)
             .Where(u => systemRoles.Contains(u.Role))
             .Skip(skipCount)
             .Take(count)
-            .ToListAsync())
-        .Select(user => user.RemoveSensitiveData());
+            .Select(user => user.RemoveSensitiveData());
 
     public Task<int> UserCountAsync() => _context.Users.CountAsync();
     

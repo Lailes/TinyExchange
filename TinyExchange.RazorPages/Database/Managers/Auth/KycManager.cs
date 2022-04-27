@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
-using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Models.AuthModels;
 using TinyExchange.RazorPages.Models.UserModels;
 
@@ -19,18 +18,16 @@ public class KycManager : IKycManager
 
     public async Task AddKycRequestInQueueAsync(KycUserRequest kycRequest, int userId)
     {
-        var user = await _userManager.FindUserByIdAsync(userId, false);
-        user.KycRequest = kycRequest;
-        await _userManager.ModifyUserAsync(user);
+        var user = await _userManager.FindUserByIdAsync(userId);
+        await _userManager.ModifyUserAsync(user, kycRequest);
     }
 
-    public async Task<IList<User>> ListUsersWithRequests(KycState[]? kycStates = null) =>
-        await _context
+    public IQueryable<User> QueryUsersWithRequests(KycState[]? kycStates = null) =>
+        _context
             .Users
             .Include(u => u.KycRequest)
-            .Where(u => kycStates == null || (u.KycRequest != null && kycStates.Contains(u.KycRequest.KycState)))
-            .ToListAsync();
-
+            .Where(u => kycStates == null || (u.KycRequest != null && kycStates.Contains(u.KycRequest.KycState)));
+    
     public async Task<ChangeKycStateResult> ChangeStateKyc(int kycId, KycState kycState)
     {
         var request = await _context.KycUserRequests.FirstOrDefaultAsync(k => k.Id == kycId);

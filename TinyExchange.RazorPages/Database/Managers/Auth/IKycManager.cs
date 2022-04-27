@@ -7,7 +7,7 @@ namespace TinyExchange.RazorPages.Database.Managers.Auth;
 public interface IKycManager
 {
     Task AddKycRequestInQueueAsync(KycUserRequest kycRequest, int userId);
-    Task<IList<User>> ListUsersWithRequests(KycState[]? kycStates = null);
+    IQueryable<User> QueryUsersWithRequests(KycState[]? kycStates = null);
     Task<ChangeKycStateResult> ChangeStateKyc(int kycId, KycState kycState);
 }
 public enum ChangeKycStateResult : byte { Ok, NotFound }

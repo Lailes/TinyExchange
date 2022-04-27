@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
+using TinyExchange.RazorPages.Models.AmountModels.DTO;
+using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.AuthModels;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -11,55 +13,49 @@ namespace TinyExchange.RazorPages.Controllers;
 public class TransferApiController : Controller
 {
     [HttpPost("debits/cancel")]
-    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}", Policy = KycClaimSettings.PolicyName)]
-    public async Task CancelTransfer([FromServices] IAmountManager amountManager, [FromBody] TransferStateChangeInfo stateChangeInfo) =>
-        Response.StatusCode = await amountManager.CancelDebitAsync(stateChangeInfo.TransferId, stateChangeInfo.CancelerId) switch
+    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FundsManager}", Policy = KycClaimSettings.PolicyName)]
+    public async Task CancelTransfer([FromServices] IAmountManager amountManager, [FromBody] StatusChangeModel statusChangeModel) =>
+        Response.StatusCode = await amountManager.CancelDebitAsync(statusChangeModel.TransferId, statusChangeModel.UserId) switch
         {
             DebitCancelResult.Ok => StatusCodes.Status200OK,
-            DebitCancelResult.NotFound => StatusCodes.Status400BadRequest,
-            DebitCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
-            _ => throw new ArgumentOutOfRangeException()
+            DebitCancelResult.NotFound => StatusCodes.Status404NotFound,
+            DebitCancelResult.NotAllowed => StatusCodes.Status409Conflict,
+            _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Cancel Debit State", StatusCodes.Status500InternalServerError)
         };
 
     [HttpPost("withdrawals/cancel")]
-    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FoundsManager}", Policy = KycClaimSettings.PolicyName)]
-    public async Task CancelWithdrawal([FromServices] IAmountManager amountManager, [FromBody] TransferStateChangeInfo stateChangeInfo) =>
-        Response.StatusCode = await amountManager.CancelWithdrawalAsync(stateChangeInfo.TransferId, stateChangeInfo.CancelerId) switch
+    [Authorize(Roles = $"{SystemRoles.User},{SystemRoles.FundsManager}", Policy = KycClaimSettings.PolicyName)]
+    public async Task CancelWithdrawal([FromServices] IAmountManager amountManager, [FromBody] StatusChangeModel statusChangeModel) =>
+        Response.StatusCode = await amountManager.CancelWithdrawalAsync(statusChangeModel.TransferId, statusChangeModel.UserId) switch
             {
                 WithdrawalCancelResult.Ok => StatusCodes.Status200OK,
-                WithdrawalCancelResult.NotFound => StatusCodes.Status400BadRequest,
-                WithdrawalCancelResult.NotAllowed => StatusCodes.Status405MethodNotAllowed,
-                _ => throw new ArgumentOutOfRangeException()
+                WithdrawalCancelResult.NotFound => StatusCodes.Status404NotFound,
+                WithdrawalCancelResult.NotAllowed => StatusCodes.Status409Conflict,
+                _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Cancel Withdrawal State", StatusCodes.Status500InternalServerError)
             };
 
     [HttpPost("debits/confirm")]
-    [Authorize(Roles = SystemRoles.FoundsManager, Policy = KycClaimSettings.PolicyName)]
-    public async Task ConfirmDebit([FromServices] IAmountManager amountManager,
-        [FromBody] TransferStateChangeInfo stateChangeInfo) =>
+    [Authorize(Policy = KycClaimSettings.PolicyName)]
+    public async Task ConfirmDebit([FromServices] IAmountManager amountManager, [FromBody] StatusChangeModel statusChangeModel) =>
         Response.StatusCode =
-            await amountManager.ConfirmDebitAsync(stateChangeInfo.TransferId, stateChangeInfo.CancelerId) switch
+            await amountManager.ConfirmDebitAsync(statusChangeModel.TransferId, statusChangeModel.UserId) switch
             {
                 ConfirmDebitResult.Ok => StatusCodes.Status200OK,
-                ConfirmDebitResult.NotFound => StatusCodes.Status405MethodNotAllowed,
-                _ => throw new ArgumentOutOfRangeException()
+                ConfirmDebitResult.NotFound => StatusCodes.Status404NotFound,
+                ConfirmDebitResult.NotAllowed => StatusCodes.Status409Conflict,
+                _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Confirm Debit State", StatusCodes.Status500InternalServerError)
             };
 
 
     [HttpPost("withdrawals/confirm")]
-    [Authorize(Roles = SystemRoles.FoundsManager, Policy = KycClaimSettings.PolicyName)]
-    public async Task ConfirmWithdrawal([FromServices] IAmountManager amountManager,
-        [FromBody] TransferStateChangeInfo stateChangeInfo) =>
-        Response.StatusCode =
-            await amountManager.ConfirmWithdrawalAsync(stateChangeInfo.TransferId, stateChangeInfo.CancelerId) switch
+    [Authorize(Roles = SystemRoles.FundsManager, Policy = KycClaimSettings.PolicyName)]
+    public async Task ConfirmWithdrawal([FromServices] IAmountManager amountManager, [FromBody] StatusChangeModel statusChangeModel) {
+        Response.StatusCode = await amountManager.ConfirmWithdrawalAsync(statusChangeModel.TransferId, statusChangeModel.UserId) switch
             {
                 ConfirmWithdrawalResult.Ok => StatusCodes.Status200OK,
-                ConfirmWithdrawalResult.NotFound => StatusCodes.Status405MethodNotAllowed,
-                _ => throw new ArgumentOutOfRangeException()
+                ConfirmWithdrawalResult.NotFound => StatusCodes.Status404NotFound,
+                ConfirmWithdrawalResult.NotAllowed => StatusCodes.Status409Conflict,
+                _ => await HttpContext.WriteMessageAndReturnStatusCodeAsync("Unknown Confirm Withdrawal State", StatusCodes.Status500InternalServerError)
             };
-}
-
-public class TransferStateChangeInfo
-{
-    public int TransferId { get; set; }
-    public int CancelerId { get; set; }
+        }
 }

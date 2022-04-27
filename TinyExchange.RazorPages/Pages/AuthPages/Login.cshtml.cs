@@ -5,6 +5,7 @@ using TinyExchange.RazorPages.Models.AuthModels;
 
 namespace TinyExchange.RazorPages.Pages.AuthPages;
 
+[IgnoreAntiforgeryToken(Order = 1001)]
 public class Login : PageModel
 {
     public string? Message { get; private set; }
@@ -16,8 +17,8 @@ public class Login : PageModel
             await authManager.SignOutAsync(HttpContext);
     }
 
-    public async Task<ActionResult> OnPost([FromServices] IAuthManager authManager, string email, string password) =>
-        await authManager.LoginAsync(new LoginData(email, password), HttpContext) switch
+    public async Task<ActionResult> OnPost([FromServices] IAuthManager authManager, [FromForm] LoginData loginData) =>
+        await authManager.LoginAsync(loginData, HttpContext) switch
         {
             OkLoginResult ok    => RedirectToPage($@"../ProfilePages/{ok.User.Role}Profile", "SelfProfile"),
             WrongLoginResult    => RedirectToPage("Login", new { message = "Wrong Login Or Password" }),
@@ -25,6 +26,6 @@ public class Login : PageModel
             KycIsRejectedResult => RedirectToPage("KycRequest", "Message",new { message = "KYC is Rejected for this user" }),
             KycNotCreatedResult => RedirectToPage("KycRequest"),
             KycIsInQueueResult  => RedirectToPage("Login", new { message = "KYC is in queue, please wait"}), 
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+            _ => new ContentResult { Content = "Unhandled Login Respnonse", StatusCode = StatusCodes.Status500InternalServerError }
         };
 }

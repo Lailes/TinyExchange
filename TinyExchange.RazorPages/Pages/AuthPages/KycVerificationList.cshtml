@@ -27,7 +27,7 @@
                 <th>Adress</th>
                 <th>Pasport</th>
                 <th>Status</th>
-                @if (SystemRoles.IsKycMamager(Model.ViewerUser!.Role))
+                @if (SystemRoles.IsKycManager(Model.ViewerUser!.Role))
                 {
                     <th>Actions</th>
                 }
@@ -45,7 +45,7 @@
                         <td>@user.KycRequest.Address</td>
                         <td>@user.KycRequest.PassportNumber</td>
                         <td>@StringStatus(user.KycRequest.KycState)</td>
-                        @if (SystemRoles.IsKycMamager(Model.ViewerUser!.Role))
+                        @if (SystemRoles.IsKycManager(Model.ViewerUser!.Role))
                         {
                             <td>
                                 <span class="justify-content-center text-center">

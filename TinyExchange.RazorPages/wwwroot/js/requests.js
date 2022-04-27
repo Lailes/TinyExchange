@@ -1,4 +1,4 @@
-function deleteRowWithId(rowId, tableId) {
+ function deleteRowWithId(rowId, tableId) {
     const table = document.getElementById(tableId)
     for(let i = 0; i < table.rows.length; i++)
         if (table.rows[i].id === rowId){
@@ -7,7 +7,7 @@ function deleteRowWithId(rowId, tableId) {
         }
 }
 
-async function cancelTransfer(transferID, cancelerID, url) {
+async function fetchTransfer(transferID, userID, url) {
     const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -16,7 +16,7 @@ async function cancelTransfer(transferID, cancelerID, url) {
         },
         body: JSON.stringify({
             transferId: transferID,
-            cancelerId: cancelerID
+            userId: userID
         })
     })
     

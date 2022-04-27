@@ -1,7 +1,12 @@
-@page
+@page "/kyc-profile-panel"
 @model TinyExchange.RazorPages.Pages.ProfilePages.KycManagerProfile
 
 <link rel="stylesheet" asp-href-include="/css/profile.css"/>
+
+@{
+    if (Model.UserForView == null)
+        throw new ArgumentNullException(nameof(Model.UserForView));
+}
 
 <div class="justify-content-center">
     <div>

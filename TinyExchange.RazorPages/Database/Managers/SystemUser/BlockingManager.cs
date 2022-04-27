@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Database.Managers.SystemUser;
@@ -14,66 +13,51 @@ public class BlockingManager: IBlockingManager
         _userManager = userManager;
     }
     
-    public async Task<BlockUserResult> UnblockUserAsync(int userId, int? adminId = null)
+    public async Task<BlockUserResult> UnblockUserAsync(int userId)
     {
-        var banRecord = await _context.Blocks.FirstOrDefaultAsync(_ => _.User.Id == userId && _.BlockState == BlockState.Blocked);
+        var banRecord = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
         if (banRecord == null)
             return BlockUserResult.UserNotBlocked;
 
-        if (adminId == null)
-            banRecord.BlockState = BlockState.AutoUnblock;
-        else
-        {
-            var releaser = await _userManager.FindUserByIdOrDefaultAsync((int) adminId, false);
-            banRecord.ReleaserAdmin = releaser;
-            banRecord.BlockState = BlockState.ManualUnblock;
-        }
-
+        banRecord.ReleaseTime = DateTime.UtcNow;
+        
         await _context.SaveChangesAsync();
         return BlockUserResult.Unblocked;
     }
     
-    public async Task<BlockUserResult> BlockUserAsync(int userId, int adminId, DateTime releaseTime, string reason = "")
+    public async Task<BlockUserResult> BlockUserAsync(int userId, DateTime releaseTime, string reason = "")
     {
-        var ban = await _context.Blocks.FirstOrDefaultAsync(ban => ban.User.Id == userId && ban.BlockState == BlockState.Blocked);
+        var ban = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
         if (ban != null)
         {
             ban.ReleaseTime = releaseTime;
+            await _context.SaveChangesAsync();
             return BlockUserResult.AlreadyBlocked;
         }
 
-        var user = await _userManager.FindUserByIdOrDefaultAsync(userId, false);
+        var user = await _userManager.FindUserByIdOrDefaultAsync(userId);
         if (user == null)
             return BlockUserResult.UserNotFound;
 
-        var admin = await _userManager.FindUserByIdOrDefaultAsync(adminId, false);
-        if (admin == null)
-            return BlockUserResult.AdminNotFound;
-
-        var block = new UserBlock
+        user.Blocks.Add(new UserBlock
         {
             Reason = reason,
-            User = user,
-            IssuerAdmin = admin,
             BanTime = DateTime.UtcNow,
             ReleaseTime = releaseTime
-        };
-        await _context.Blocks.AddAsync(block);
+        });
         
         await _context.SaveChangesAsync();
         return BlockUserResult.Blocked;
     }
     
 
-    public async Task<UserBlock?> GetUserBlockAsync(int userId)
+    public async Task<bool> CheckIsUserBlockedAsync(int userId)
     {
-        var block = await _context.Blocks.FirstOrDefaultAsync(block => block.User.Id == userId && block.BlockState == BlockState.Blocked);
-        if (block == null || block.BanTime >= DateTime.UtcNow)
-            return block;
+        var block = (await _userManager.FindUserByIdAsync(userId)).ActiveBlock;
 
-        block.ReleaseTime = DateTime.UtcNow;
-        block.BlockState = BlockState.AutoUnblock;
-        await _context.SaveChangesAsync();
-        return null;
+        if (block is null)
+            return false;
+
+        return block.ReleaseTime >= DateTime.UtcNow;
     }
 }

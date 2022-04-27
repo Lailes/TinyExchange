@@ -7,6 +7,7 @@ using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
 using TinyExchange.RazorPages.Infrastructure.Extensions;
 using TinyExchange.RazorPages.Models.AuthModels;
+using TinyExchange.RazorPages.Models.AuthModels.DTO;
 using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Pages.AuthPages;
@@ -27,7 +28,7 @@ public class KycRequest : PageModel
     }
 
     public async Task OnGet() => 
-        RequesterUser = await _userManager.FindUserByIdAsync(User.GetUserIdFromClaims());
+        RequesterUser = await _userManager.FindUserByIdAsync(User.GetUserId());
 
     public async Task OnGetMessage(string message)
     {
@@ -35,12 +36,16 @@ public class KycRequest : PageModel
         await OnGet();
     }
     
-    public async Task<IActionResult> OnPost([FromForm] KycUserRequest request)
+    public async Task<IActionResult> OnPost([FromForm] KycRequestModel request)
     {
-        await _kycManager.AddKycRequestInQueueAsync(request, User.GetUserIdFromClaims());
+        if (!TryValidateModel(request))
+            return RedirectToPage("KycRequest");
+            
+        await _kycManager.AddKycRequestInQueueAsync(KycUserRequest.FromModel(request), User.GetUserId());
         return RedirectToPage("Login", new { message = "KYC Request is created" });
     }
 
     public bool RequestIsNeeded =>
-        RequesterUser.KycRequest == null || RequesterUser.KycRequest.KycState == KycState.Rejected;
+        RequesterUser != null &&
+        (RequesterUser.KycRequest == null || RequesterUser.KycRequest.KycState == KycState.Rejected);
 }
