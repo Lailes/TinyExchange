@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using TinyExchange.RazorPages.Controllers;
+using TinyExchange.RazorPages.Database;
 using TinyExchange.RazorPages.Database.Managers.Amount;
 using TinyExchange.RazorPages.Database.Managers.Auth;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
 using TinyExchange.RazorPages.Infrastructure.Authentication;
+using TinyExchange.RazorPages.Infrastructure.Transaction;
 using ApplicationContext = TinyExchange.RazorPages.Database.ApplicationContext;
 namespace TinyExchange.RazorPages;
 
@@ -25,6 +28,7 @@ public class Startup
         services.AddScoped<IBlockingManager, BlockingManager>();
         services.AddScoped<IAmountManager, AmountManager>();
         services.AddScoped<IKycManager, KycManager>();
+        services.AddSingleton<LockProvider>();
 
         services.AddAuthorization(options => options.AddPolicy(KycClaimSettings.PolicyName, 
             builder => builder.RequireClaim(KycClaimSettings.ClaimType, KycClaimSettings.ConfirmedKycClaimValue)));

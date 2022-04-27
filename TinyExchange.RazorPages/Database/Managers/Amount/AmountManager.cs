@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TinyExchange.RazorPages.Database.Managers.SystemUser;
+using TinyExchange.RazorPages.Infrastructure.Exceptions;
+using TinyExchange.RazorPages.Infrastructure.Transaction;
 using TinyExchange.RazorPages.Models.AmountModels;
 using TinyExchange.RazorPages.Models.AuthModels;
-using TinyExchange.RazorPages.Models.UserModels;
 
 namespace TinyExchange.RazorPages.Database.Managers.Amount;
 
@@ -11,12 +12,14 @@ public class AmountManager : IAmountManager
     private readonly ApplicationContext _context;
     private readonly IUserManager _userManager;
     private readonly IBlockingManager _blockingManager;
-    
-    public AmountManager(ApplicationContext context, IUserManager userManager, IBlockingManager blockingManager)
+    private readonly LockProvider _lockProvider;
+
+    public AmountManager(ApplicationContext context, IUserManager userManager, IBlockingManager blockingManager, LockProvider lockProvider)
     {
         _context = context;
         _userManager = userManager;
         _blockingManager = blockingManager;
+        _lockProvider = lockProvider;
     }
 
     public Task<Debit?> FindDebitByIdOrDefaultAsync(int transferId) => 
@@ -34,8 +37,9 @@ public class AmountManager : IAmountManager
 
     public async Task<DebitResult> CreateDebitAsync(Debit debit)
     {
+        using var @lock = _lockProvider.GetLock(debit.User.Email);
         await using var transaction = await _context.Database.BeginTransactionAsync();
-        
+
         if (await _blockingManager.CheckIsUserBlockedAsync(debit.User.Id))
             return DebitResult.Banned;
 
@@ -68,21 +72,20 @@ public class AmountManager : IAmountManager
 
     public async Task<WithdrawalResult> CreateWithdrawal(Withdrawal withdrawal)
     {
-        if (await _blockingManager.CheckIsUserBlockedAsync(withdrawal.User.Id))
+        using var @lock = _lockProvider.GetLock(withdrawal.User.Email);
+        
+        if (await _blockingManager.CheckIsUserBlockedAsync(withdrawal.User.Id)) 
             return WithdrawalResult.Banned;
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        
         var userAmountInfo = await GetAmountInfoForUser(withdrawal.User.Id);
         if (userAmountInfo.Amount < withdrawal.Amount)
             return WithdrawalResult.FailNoAmount;
-        
+
         withdrawal.DateTime = DateTime.UtcNow;
         withdrawal.User = await _userManager.FindUserByIdAsync(withdrawal.User.Id);
         _context.Withdrawals.Add(withdrawal);
-        
+
         await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
         
         return WithdrawalResult.Ok;
     }
